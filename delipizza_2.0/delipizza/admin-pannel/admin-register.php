@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 
 
 session_start();
@@ -22,7 +23,7 @@ if (isset($_POST['submit'])) {
     $image_tmp_name = $_FILES['profile-p']['tmp_name'];
     $image_folder = '../uploaded-img/admin/' . $image;
 
-    $select_admin = $conn->prepare("SELECT * FROM administrador WHERE nombre_Admin = ?");
+    $select_admin = $pdo->prepare("SELECT * FROM administrador WHERE nombre_Admin = ?");
     $select_admin->execute([$name]);
     if ($select_admin->rowCount() > 0) {
         $warning_msg[] = 'El nombre de usuario ya existe';
@@ -30,7 +31,7 @@ if (isset($_POST['submit'])) {
         if ($pass != $cpass) {
             $warning_msg[] = 'Las contraseñas no coinciden';
         } else {
-            $insert_admin = $conn->prepare("INSERT INTO administrador (nombre_Admin, email_Admin, contraseña_Admin, foto) VALUES (?, ?, ?, ?)");
+            $insert_admin = $pdo->prepare("INSERT INTO administrador (nombre_Admin, email_Admin, contraseña_Admin, foto) VALUES (?, ?, ?, ?)");
             $insert_admin->execute([$name, $email, $cpass, $image]);
             move_uploaded_file($image_tmp_name, $image_folder);
             $success_msg[] = 'Registro de Administrador exitoso';

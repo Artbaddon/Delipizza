@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 
 
 session_start();
@@ -41,7 +42,7 @@ if (isset($_POST['submit'])) {
     $image_folder = '../uploaded-img/clientes/
     ' . $image;
 
-    $select_admin = $conn->prepare("SELECT * FROM usuario WHERE email_Usuario  = ?");
+    $select_admin = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario  = ?");
     $select_admin->execute([$email]);
     if ($select_admin->rowCount() > 0) {
         $warning_msg[] = 'El email del usuario ya existe';
@@ -49,7 +50,7 @@ if (isset($_POST['submit'])) {
         if ($pass != $cpass) {
             $warning_msg[] = 'Las contraseñas no coinciden';
         } else {
-            $insert_admin = $conn->prepare("INSERT INTO usuario (nombre_Usuario, email_Usuario, telefono_Usuario, contraseña_Usuario, direccion_Usuario, metodo_pago, barrio_Usuario, foto) VALUES (?, ?, ?, ?,?,?,?,?)");
+            $insert_admin = $pdo->prepare("INSERT INTO usuario (nombre_Usuario, email_Usuario, telefono_Usuario, contraseña_Usuario, direccion_Usuario, metodo_pago, barrio_Usuario, foto) VALUES (?, ?, ?, ?,?,?,?,?)");
             $insert_admin->execute([$name, $email, $phone, $cpass, $address, $payment_method, $barrio, $image]);
             move_uploaded_file($image_tmp_name, $image_folder);
             $success_msg[] = 'Registro de Usuario exitoso';

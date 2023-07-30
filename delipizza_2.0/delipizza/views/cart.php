@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../components/connect.php';
+include '../components/queries.php';
 
 $time = time();
 
@@ -54,16 +55,16 @@ if (isset($_POST['make_order'])) {
     $price = $product['price'];
     $quantity = $product['quantity'];
 
-    $insert_order = $conn->prepare("INSERT INTO orden (ID_Usuario_pedido , ProductoID, nombre_Producto, precio, cantidad) VALUES (?, ?, ?, ?, ?)");
+    $insert_order = $pdo->prepare("INSERT INTO orden (ID_Usuario_pedido , ProductoID, nombre_Producto, precio, cantidad) VALUES (?, ?, ?, ?, ?)");
     $insert_order->execute([$user_id, $product_id, $name, $price, $quantity]);
-    $select_order = $conn->prepare("SELECT * FROM orden WHERE ID_Usuario_pedido = ? ");
+    $select_order = $pdo->prepare("SELECT * FROM orden WHERE ID_Usuario_pedido = ? ");
     $select_order->execute([$user_id]);
     $fetch_order = $select_order->fetch(PDO::FETCH_ASSOC);
     $order_id = $fetch_order['ID_orden'];
     if ($insert_order->rowCount() > 0) {
       $total_price += $product['price'] * $product['quantity'];
 
-      $insert_order_details = $conn->prepare("INSERT INTO detalles_orden (ID_Usuario_pedido , ID_orden, fecha_Orden, estado, total) VALUES (?, ?, ?, ?, ?)");
+      $insert_order_details = $pdo->prepare("INSERT INTO detalles_orden (ID_Usuario_pedido , ID_orden, fecha_Orden, estado, total) VALUES (?, ?, ?, ?, ?)");
       $insert_order_details->execute([$user_id, $order_id, date("Y-m-d h:i:sa, $time"), "En preparacion", $total_price]);
       if ($insert_order_details->rowCount() > 0) {
         $success_msg[] = "Pedido realizado con éxito";

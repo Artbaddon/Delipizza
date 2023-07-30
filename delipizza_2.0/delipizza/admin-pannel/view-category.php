@@ -1,6 +1,7 @@
 <?php
 
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $admin_id = $_SESSION['admin_id'];
@@ -12,7 +13,7 @@ if (isset($_POST['delete'])) {
     $p_id = $_POST['product_id'];
     $p_id = htmlspecialchars($p_id);
 
-    $delete_product = $conn->prepare("DELETE FROM Categoria WHERE ID_Categoria=?");
+    $delete_product = $pdo->prepare("DELETE FROM Categoria WHERE ID_Categoria=?");
     $delete_product->execute([$p_id]);
 
     $success_msg[] = 'Categoria borrado exitosamente';
@@ -44,7 +45,7 @@ if (isset($_POST['delete'])) {
 
             <div class="box-container">
                 <?php
-                $select_product = $conn->prepare("SELECT * FROM categoria WHERE ID_Categoria>1");
+                $select_product = $pdo->prepare("SELECT * FROM categoria WHERE ID_Categoria>1");
                 $select_product->execute();
                 if ($select_product->rowCount() > 0) {
                     while ($fetch_product = $select_product->fetch(PDO::FETCH_ASSOC)) {

@@ -8,7 +8,7 @@
     </div>
     <div class="profile-detail">
         <?php
-        $select_profile = $conn->prepare("SELECT * FROM administrador WHERE ID_Administrador = ?");
+        $select_profile = $pdo->prepare("SELECT * FROM administrador WHERE ID_Administrador = ?");
         $select_profile->execute([$admin_id]);
         if ($select_profile->rowCount() > 0) {
             $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
@@ -29,7 +29,7 @@
     <div class="sidebar">
         <?php
 
-        $select_profile = $conn->prepare("SELECT * FROM administrador WHERE ID_Administrador = ?");
+        $select_profile = $pdo->prepare("SELECT * FROM administrador WHERE ID_Administrador = ?");
         $select_profile->execute([$admin_id]);
 
         if ($select_profile->rowCount() > 0) {

@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $user_id = $_SESSION['user_id'];
@@ -53,15 +54,15 @@ if (!isset($user_id)) {
       <h2 class="text-center">Menu</h2>
       <div class="float-container">
         <?php
-        $select_category = $conn->prepare("SELECT * FROM categoria WHERE ID_Categoria != 1");
+        $select_category = $pdo->prepare("SELECT * FROM categoria WHERE ID_Categoria != 1");
         $select_category->execute();
         $categories = $select_category->fetchAll(PDO::FETCH_ASSOC);
         foreach ($categories as $category) {
         ?>
-          <h2><?= $category['nombre_Categoria'] ?></h2>
+          <h2 id="<?=$category['ID_Categoria'] ?>"><?= $category['nombre_Categoria'] ?></h2>
 
           <?php
-          $select_product = $conn->prepare("SELECT * FROM producto  WHERE CategoriaID =? AND estado='activo'");
+          $select_product = $pdo->prepare("SELECT * FROM producto  WHERE CategoriaID =? AND estado='activo'");
           $select_product->execute([$category['ID_Categoria']]);
           $fetch_product = $select_product->fetchAll(PDO::FETCH_ASSOC);
 

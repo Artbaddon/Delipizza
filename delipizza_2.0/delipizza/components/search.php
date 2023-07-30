@@ -15,7 +15,7 @@ if (isset($_GET['submit']) and $_GET['producto'] == "") {
 } else
 if (isset($_GET['producto']) and $_GET['producto'] != "") {
   $product = $_GET['producto'];
-  $select_product = $conn->prepare("SELECT * FROM producto WHERE nombre_producto LIKE ?");
+  $select_product = $pdo->prepare("SELECT * FROM producto WHERE nombre_producto LIKE ?");
 
   $select_product->execute(["%$product%"]);
   $fetch_product = $select_product->fetchAll(PDO::FETCH_ASSOC);

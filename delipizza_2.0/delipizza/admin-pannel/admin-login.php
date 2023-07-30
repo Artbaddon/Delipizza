@@ -1,6 +1,6 @@
 <?php
 include '../components/connect.php';
-
+include '../components/queries.php';
 
 session_start();
 
@@ -14,10 +14,10 @@ if (isset($_POST['submit'])) {
     $pass = htmlspecialchars($pass);
 
 
-    $select_admin = $conn->prepare("SELECT * FROM administrador WHERE email_Admin = ? AND contraseña_Admin = ?");
+    $select_admin = $pdo->prepare("SELECT * FROM administrador WHERE email_Admin = ? AND contraseña_Admin = ?");
     $select_admin->execute([$email, $pass]);
     if ($select_admin->rowCount() > 0) {
-        $fetch_admin_id = $select_admin->fetch(PDO::FETCH_ASSOC);
+        $fetch_admin_id = $select_admin->fetch();
         $_SESSION['admin_id'] = $fetch_admin_id['ID_Administrador'];
         header('location:dashboard.php');
     } else {

@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 
 
 session_start();
@@ -40,7 +41,7 @@ if (!isset($user_id)) {
                 <div class="sidebar">
                     <?php
 
-                    $select_profile = $conn->prepare("SELECT * FROM usuario WHERE ID_Usuario = ?");
+                    $select_profile = $pdo->prepare("SELECT * FROM usuario WHERE ID_Usuario = ?");
                     $select_profile->execute([$user_id]);
 
                     if ($select_profile->rowCount() > 0) {
@@ -84,18 +85,18 @@ if (!isset($user_id)) {
                     </thead>
                     <tbody>
                         <?php
-                        $select_orders = $conn->prepare("SELECT * FROM orden WHERE ID_Usuario_pedido  = ? ");
+                        $select_orders = $pdo->prepare("SELECT * FROM orden WHERE ID_Usuario_pedido  = ? ");
                         $select_orders->execute([$user_id]);
                     
 
 
                         if ($select_orders->rowCount() > 0) {
                             while ($fetch_orders = $select_orders->fetch()) {
-                                $select_product = $conn->prepare("SELECT * FROM producto WHERE ID_producto = ?");
+                                $select_product = $pdo->prepare("SELECT * FROM producto WHERE ID_producto = ?");
                                 $select_product->execute([$fetch_orders['ProductoID']]);
                                 $fetch_product = $select_product->fetch(PDO::FETCH_ASSOC);
 
-                                $select_order_detail = $conn->prepare("SELECT * FROM detalles_orden WHERE ID_Usuario_pedido = ?");
+                                $select_order_detail = $pdo->prepare("SELECT * FROM detalles_orden WHERE ID_Usuario_pedido = ?");
                                 $select_order_detail->execute([$user_id]);
                                 $fetch_order_detail = $select_order_detail->fetch(PDO::FETCH_ASSOC);
                                
