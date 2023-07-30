@@ -1,6 +1,7 @@
 <?php
 
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $admin_id = $_SESSION['admin_id'];
@@ -25,7 +26,7 @@ if (isset($_POST['save'])) {
     $state = htmlspecialchars($state);
 
 
-    $update_product = $conn->prepare("UPDATE producto SET nombre_Producto = ?, precio_Producto = ?, descripcion_Producto = ?, CategoriaID = ?, estado = ?  WHERE ID_Producto = ?");
+    $update_product = $pdo->prepare("UPDATE producto SET nombre_Producto = ?, precio_Producto = ?, descripcion_Producto = ?, CategoriaID = ?, estado = ?  WHERE ID_Producto = ?");
     $update_product->execute([$title, $price, $description, $category, $state, $_POST['product_id']]);
     $success_msg[] = 'Producto actualizado';
 
@@ -34,14 +35,14 @@ if (isset($_POST['save'])) {
     $image_size = $_FILES['image']['size'];
     $image_tmp_name = $_FILES['image']['tmp_name'];
     $image_folder = '../uploaded-img/productos/' . $image;
-    $select_image = $conn->prepare("SELECT img_Producto FROM producto WHERE ID_Producto = ?");
+    $select_image = $pdo->prepare("SELECT img_Producto FROM producto WHERE ID_Producto = ?");
     $select_image->execute([$_POST['product_id']]);
 
     if (!empty($image)) {
         if ($image_size > 10000000) {
             $warning_msg[] = 'La imagen es muy grande';
         } else {
-            $update_image = $conn->prepare("UPDATE producto SET img_Producto = ? WHERE ID_Producto = ?");
+            $update_image = $pdo->prepare("UPDATE producto SET img_Producto = ? WHERE ID_Producto = ?");
             $update_image->execute([$image, $product_id]);
             move_uploaded_file($image_tmp_name, $image_folder);
             if ($old_image != $image and $old_image != '') {
@@ -52,7 +53,7 @@ if (isset($_POST['save'])) {
     }
     //Delete product
     if (isset($_POST['delete_product'])) {
-        $delete_product = $conn->prepare("UPDATE producto SET estado='inactivo' WHERE ID_Producto = ?");
+        $delete_product = $pdo->prepare("UPDATE producto SET estado='inactivo' WHERE ID_Producto = ?");
         $delete_product->execute([$_POST['product_id']]);
         unlink('../uploaded-img/productos/' . $old_image);
         header('location:admin-dashboard.php');
@@ -88,7 +89,7 @@ if (isset($_POST['save'])) {
             <div class="box-container">
                 <?php
                 $product_id = $_GET['id'];
-                $get_product = $conn->prepare("SELECT * FROM producto WHERE ID_Producto = ?");
+                $get_product = $pdo->prepare("SELECT * FROM producto WHERE ID_Producto = ?");
                 $get_product->execute([$product_id]);
                 if ($get_product->rowCount() > 0) {
                     while ($fetch_product = $get_product->fetch(PDO::FETCH_ASSOC)) {
@@ -130,7 +131,7 @@ if (isset($_POST['save'])) {
                                             <?= $fetch_product['CategoriaID']; ?>
                                         </option>
                                         <?php
-                                        $get_category = $conn->prepare("SELECT * FROM categoria");
+                                        $get_category = $pdo->prepare("SELECT * FROM categoria");
                                         $get_category->execute();
                                         if ($get_category->rowCount() > 0) {
                                             while ($fetch_category = $get_category->fetch(PDO::FETCH_ASSOC)) {

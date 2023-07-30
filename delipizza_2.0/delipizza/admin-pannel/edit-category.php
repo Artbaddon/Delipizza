@@ -1,6 +1,7 @@
 <?php
 
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $admin_id = $_SESSION['admin_id'];
@@ -8,7 +9,8 @@ if (!isset($admin_id)) {
     header('location:admin-login.php');
 }
 $product_id = $_GET['id'];
-if (isset($_POST['save'])) {
+print_r($_POST);
+if (isset($_POST['save_product'])) {
     $title = $_POST['title'];
     $title = htmlspecialchars($title);
     $description = $_POST['description'];
@@ -17,7 +19,7 @@ if (isset($_POST['save'])) {
 
 
 
-    $update_product = $conn->prepare("UPDATE categoria SET nombre_Categoria= ?, desc_Categoria= ?  WHERE ID_Categoria = ?");
+    $update_product = $pdo->prepare("UPDATE categoria SET nombre_Categoria= ?, desc_Categoria= ?  WHERE ID_Categoria = ?");
     $update_product->execute([$title, $description, $category_id]);
     $success_msg[] = 'Producto actualizado';
 
@@ -26,14 +28,14 @@ if (isset($_POST['save'])) {
     $image_size = $_FILES['image']['size'];
     $image_tmp_name = $_FILES['image']['tmp_name'];
     $image_folder = '../uploaded-img/categorias/' . $image;
-    $select_image = $conn->prepare("SELECT img_Categoria FROM categoria WHERE ID_Categoria = ?");
+    $select_image = $pdo->prepare("SELECT img_Categoria FROM categoria WHERE ID_Categoria = ?");
     $select_image->execute([$category_id]);
 
     if (!empty($image)) {
         if ($image_size > 10000000) {
             $warning_msg[] = 'La imagen es muy grande';
         } else {
-            $update_image = $conn->prepare("UPDATE categoria SET img_Categoria = ? WHERE ID_Categoria = ?");
+            $update_image = $pdo->prepare("UPDATE categoria SET img_Categoria = ? WHERE ID_Categoria = ?");
             $update_image->execute([$image, $product_id]);
             move_uploaded_file($image_tmp_name, $image_folder);
             if ($old_image != $image and $old_image != '') {
@@ -44,7 +46,7 @@ if (isset($_POST['save'])) {
     }
     //Delete product
     if (isset($_POST['delete_product'])) {
-        $delete_product = $conn->prepare("DELETE FROM categoria WHERE ID_Categoria = ?");
+        $delete_product = $pdo->prepare("DELETE FROM categoria WHERE ID_Categoria = ?");
         $delete_product->execute([$_POST['product_id']]);
         unlink('../uploaded-img/categorias/' . $old_image);
         header('location:admin-dashboard.php');
@@ -80,7 +82,7 @@ if (isset($_POST['save'])) {
             <div class="box-container">
                 <?php
                 $category_id = $_GET['id'];
-                $get_category = $conn->prepare("SELECT * FROM categoria WHERE ID_Categoria = ?");
+                $get_category = $pdo->prepare("SELECT * FROM categoria WHERE ID_Categoria = ?");
                 $get_category->execute([$category_id]);
                 if ($get_category->rowCount() > 0) {
                     while ($fetch_category = $get_category->fetch(PDO::FETCH_ASSOC)) {
@@ -107,13 +109,15 @@ if (isset($_POST['save'])) {
                                     <?php if ($fetch_category['img_Categoria'] != '') { ?>
                                         <img src="../uploaded-img/categorias/<?= $fetch_category['img_Categoria']; ?>" alt="" class="image">
                                         <div class="flex-btn">
-                                            <input type="submit" name="delete_image" class="btn" value="borrar imagen">
+
                                             <a href="view-categorys.php" class="btn" style="width:49%; text-align:center; height: 3rem;margin-top:.7rem;">volver</a>
                                         </div>
                                     <?php } ?>
                                     <div class="flex-btn">
                                         <input type="submit" name="save" value="guardar categoria">
                                         <input type="submit" name="delete_category" value="borrar categoria">
+
+
                                     </div>
                                 </div>
 
@@ -131,7 +135,7 @@ if (isset($_POST['save'])) {
         </section>
     </div>
 
-    <?php include '../components/dark.php'; ?>
+
     <script src="../js/script.js"></script>
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

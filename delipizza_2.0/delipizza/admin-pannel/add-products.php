@@ -1,6 +1,7 @@
 <?php
 
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $admin_id = $_SESSION['admin_id'];
@@ -34,9 +35,9 @@ if (isset($_POST['publish'])) {
         $warning_msg[] = 'La imagen es muy grande';
     } else {
         move_uploaded_file($image_tmp_name, $image_folder);
-        $insert_product = $conn->prepare("INSERT INTO producto (nombre_Producto, precio_Producto, descripcion_Producto, CategoriaID, estado,img_Producto) VALUES (?,?,?,?,?,?)");
-        $insert_product->execute([$title, $price, $description, $category, $state, $image]);
-        $success_msg[] = 'Producto añadido';
+        $datos = array();
+        array_push($datos, $title, $price, $description, $category, $state, $image);
+        hacerConsulta($datos, "insertarProducto");
     }
 }
 
@@ -45,7 +46,7 @@ if (isset($_POST['publish'])) {
 
 
 <style>
-     <?php include '../css/admin-style.css'; ?>
+    <?php include '../css/admin-style.css'; ?>
 </style>
 <!DOCTYPE html>
 <html lang="en">
@@ -111,7 +112,7 @@ if (isset($_POST['publish'])) {
                     </div>
                     <div class="input-field">
                         <input type="submit" name="publish" value="Publicar Producto" class="btn">
-                     
+
                     </div>
                 </form>
             </div>

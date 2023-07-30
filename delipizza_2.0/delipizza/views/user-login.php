@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 
 
 session_start();
@@ -14,12 +15,12 @@ if (isset($_POST['submit'])) {
     $pass = htmlspecialchars($pass);
 
 
-    $select_admin = $conn->prepare("SELECT * FROM usuario WHERE email_Usuario = ? AND contraseña_Usuario = ?");
+    $select_admin = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ? AND contraseña_Usuario = ?");
     $select_admin->execute([$email, $pass]);
     if ($select_admin->rowCount() > 0) {
         $fetch_admin_id = $select_admin->fetch(PDO::FETCH_ASSOC);
         $_SESSION['user_id'] = $fetch_admin_id['ID_Usuario'];
-        header('location:index.php');   
+        header('location:../index.php');   
     } else {
         $warning_msg[] = 'El email   o la contraseña son incorrectos';
     }

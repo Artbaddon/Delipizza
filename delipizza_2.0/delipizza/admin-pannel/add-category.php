@@ -1,6 +1,7 @@
 <?php
 
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $admin_id = $_SESSION['admin_id'];
@@ -9,7 +10,7 @@ if (!isset($admin_id)) {
 }
 //Añadir categoria a DB
 if (isset($_POST['publish'])) {
-  
+
     $title = $_POST['title'];
     $title = htmlspecialchars($title);
     $description = $_POST['description'];
@@ -21,17 +22,18 @@ if (isset($_POST['publish'])) {
     $image_tmp_name = $_FILES['image']['tmp_name'];
     $image_folder = '../uploaded-img/categorias/' . $image;
 
- 
-      
-        if ($image_size > 1000000) {
-            $warning_msg[] = 'La imagen es muy grande';
-        } else {
-            move_uploaded_file($image_tmp_name, $image_folder);
-            $insert_product = $conn->prepare("INSERT INTO categoria (nombre_Categoria, desc_Categoria, img_Categoria) VALUES (?,?,?)");
-            $insert_product->execute([$title, $description, $image]);
-            $success_msg[] = 'Categoria añadida';
-        }
-   
+
+
+    if ($image_size > 1000000) {
+        $warning_msg[] = 'La imagen es muy grande';
+    } else {
+        move_uploaded_file($image_tmp_name, $image_folder);
+        $datos = array();
+        array_push($datos,$title, $description, $image);
+        hacerConsulta($datos,"insertarCategoria");
+       
+    
+    }
 }
 
 ?>
@@ -84,7 +86,7 @@ if (isset($_POST['publish'])) {
         </section>
     </div>
 
-    <?php include '../components/dark.php'; ?>
+ 
     <script src="../js/script.js"></script>
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

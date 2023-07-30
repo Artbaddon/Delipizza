@@ -1,7 +1,7 @@
 <header class="navbar">
     <div class="container-nav">
         <div class="logo-nav">
-            <a href="index.php">
+            <a href="../index.php">
                 <img src="../image/Delipizza-logo-final.jpg" alt="" class="img-responsive" />
             </a>
         </div>
@@ -9,7 +9,7 @@
 
             <ul>
                 <li>
-                    <a href="index.php">Inicio</a>
+                    <a href="../index.php">Inicio</a>
                 </li>
                 <li>
                     <a href="menu.php">Menu</a>
@@ -34,7 +34,7 @@
         </nav>
         <div class="profile-detail">
             <?php
-            $select_profile = $conn->prepare("SELECT * FROM usuario WHERE ID_Usuario = ?");
+            $select_profile = $pdo->prepare("SELECT * FROM usuario WHERE ID_Usuario = ?");
             $select_profile->execute([$user_id]);
             if ($select_profile->rowCount() > 0) {
                 $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);

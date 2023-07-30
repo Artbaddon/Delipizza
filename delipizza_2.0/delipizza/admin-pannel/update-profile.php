@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 
 
 session_start();
@@ -13,13 +14,13 @@ if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $name = htmlspecialchars($name);
     if (!empty($name) and $name != '') {
-        $select_name = $conn->prepare("SELECT * FROM administrador WHERE nombre_Admin = ?");
+        $select_name = $pdo->prepare("SELECT * FROM administrador WHERE nombre_Admin = ?");
         $select_name->execute([$name]);
 
         if ($select_name->rowCount() > 0) {
             $warning_msg[] = 'El nombre de usuario ya existe';
         } else {
-            $update_admin = $conn->prepare("UPDATE administrador SET nombre_Admin = ? WHERE ID_Administrador = ?");
+            $update_admin = $pdo->prepare("UPDATE administrador SET nombre_Admin = ? WHERE ID_Administrador = ?");
             $update_admin->execute([$name, $admin_id]);
             $success_msg[] = 'Nombre de usuario actualizado';
         }
@@ -29,13 +30,13 @@ if (isset($_POST['submit'])) {
     $email = $_POST['email'];
     $name = htmlspecialchars($email);
     if (!empty($email) and $email != $email) {
-        $select_name = $conn->prepare("SELECT * FROM administrador WHERE email_Admin = ?");
+        $select_name = $pdo->prepare("SELECT * FROM administrador WHERE email_Admin = ?");
         $select_name->execute([$email]);
 
         if ($select_name->rowCount() > 0) {
             $warning_msg[] = 'El email ya existe';
         } else {
-            $update_admin = $conn->prepare("UPDATE administrador SET email_Admin = ? WHERE ID_Administrador = ?");
+            $update_admin = $pdo->prepare("UPDATE administrador SET email_Admin = ? WHERE ID_Administrador = ?");
             $update_admin->execute([$email, $admin_id]);
             $success_msg[] = 'Email actualizado';
         }
@@ -48,7 +49,7 @@ if (isset($_POST['submit'])) {
     $image_tmp_name = $_FILES['profile-p']['tmp_name'];
     $image_folder = '../uploaded-img/admin/' . $image;
 
-    $update_image = $conn->prepare("UPDATE administrador SET foto = ? WHERE ID_Administrador = ?");
+    $update_image = $pdo->prepare("UPDATE administrador SET foto = ? WHERE ID_Administrador = ?");
     $update_image->execute([$image, $admin_id]);
     move_uploaded_file($image_tmp_name, $image_folder);
     if ($old_image != $image && $old_image != '') {
@@ -58,7 +59,7 @@ if (isset($_POST['submit'])) {
 
     //Actualizar contraseña
     $empty_password = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-    $select_old_pass = $conn->prepare("SELECT * FROM administrador WHERE ID_Administrador = ?");
+    $select_old_pass = $pdo->prepare("SELECT * FROM administrador WHERE ID_Administrador = ?");
     $select_old_pass->execute([$admin_id]);
 
     $fetch_prev_pass = $select_old_pass->fetch(PDO::FETCH_ASSOC);
@@ -82,7 +83,7 @@ if (isset($_POST['submit'])) {
             $warning_msg[] = 'Las contraseñas no coinciden';
         } else {
             if ($new_pass != $empty_password and $old_pass != $prev_pass) {
-                $update_pass = $conn->prepare("UPDATE administrador SET contraseña_Admin = ? WHERE ID_Administrador = ?");
+                $update_pass = $pdo->prepare("UPDATE administrador SET contraseña_Admin = ? WHERE ID_Administrador = ?");
                 $update_pass->execute([$new_pass, $admin_id]);
                 $success_msg[] = 'Contraseña actualizada correctamente';
             } else {

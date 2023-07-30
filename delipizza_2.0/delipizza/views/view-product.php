@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 session_start();
 
 $user_id = $_SESSION['user_id'];
@@ -53,7 +54,7 @@ $_GET['product_id'];
 
             <div class="container-product">
                 <?php
-                $select_product = $conn->prepare("SELECT * FROM producto WHERE ID_producto=?");
+                $select_product = $pdo->prepare("SELECT * FROM producto WHERE ID_producto=?");
                 $select_product->execute([$_GET['product_id']]);
                 if ($select_product->rowCount() > 0) {
                     while ($fetch_product = $select_product->fetch(PDO::FETCH_ASSOC)) {

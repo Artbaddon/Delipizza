@@ -1,5 +1,6 @@
 <?php
 include '../components/connect.php';
+include '../components/queries.php';
 
 
 session_start();
@@ -17,13 +18,13 @@ if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $name = htmlspecialchars($name);
     if (!empty($name)){
-        $select_name = $conn->prepare("SELECT * FROM usuario WHERE email_Usuario = ?");
+        $select_name = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ?");
         $select_name->execute([$name]);
 
         if ($select_name->rowCount() > 0) {
             $warning_msg[] = 'El email de usuario ya existe';
         } else {
-            $update_admin = $conn->prepare("UPDATE usuario SET nombre_Usuario = ? WHERE ID_Usuario = ?");
+            $update_admin = $pdo->prepare("UPDATE usuario SET nombre_Usuario = ? WHERE ID_Usuario = ?");
             $update_admin->execute([$name, $user_id]);
             $success_msg[] = 'Nombre de usuario actualizado';
         }
@@ -32,13 +33,13 @@ if (isset($_POST['submit'])) {
     $email = $_POST['email'];
     $email= htmlspecialchars($email);
     if (!empty($email) and $email != $email) {
-        $select_name = $conn->prepare("SELECT * FROM usuario WHERE email_Usuario = ?");
+        $select_name = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ?");
         $select_name->execute([$email]);
 
         if ($select_name->rowCount() > 0) {
             $warning_msg[] = 'El email ya existe';
         } else {
-            $update_user = $conn->prepare("UPDATE usuario SET email_Usuario = ? WHERE ID_Usuario = ?");
+            $update_user = $pdo->prepare("UPDATE usuario SET email_Usuario = ? WHERE ID_Usuario = ?");
             $update_user->execute([$email, $user_id]);
             $success_msg[] = 'Email actualizado';
         }
@@ -51,7 +52,7 @@ if (isset($_POST['submit'])) {
         $image_tmp_name = $_FILES['profile-p']['tmp_name'];
         $image_folder = '../uploaded-img/clientes/' . $image;
 
-        $update_image = $conn->prepare("UPDATE usuario SET foto = ? WHERE ID_Usuario = ?");
+        $update_image = $pdo->prepare("UPDATE usuario SET foto = ? WHERE ID_Usuario = ?");
         $update_image->execute([$image, $user_id]);
         move_uploaded_file($image_tmp_name, $image_folder);
         if ($old_image != $image && $old_image != '') {
@@ -61,7 +62,7 @@ if (isset($_POST['submit'])) {
 
     //Actualizar contraseña
     $empty_password = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-    $select_old_pass = $conn->prepare("SELECT contraseña_Usuario FROM usuario WHERE ID_Usuario = ?");
+    $select_old_pass = $pdo->prepare("SELECT contraseña_Usuario FROM usuario WHERE ID_Usuario = ?");
     $select_old_pass->execute([$user_id]);
 
     $fetch_prev_pass = $select_old_pass->fetch(PDO::FETCH_ASSOC);
@@ -83,7 +84,7 @@ if (isset($_POST['submit'])) {
             $warning_msg[] = 'Las contraseñas no coinciden';
         } else {
             if ($new_pass != $empty_password) {
-                $update_pass = $conn->prepare("UPDATE usuario SET contraseña_Usuario = ? WHERE ID_Usuario = ?");
+                $update_pass = $pdo->prepare("UPDATE usuario SET contraseña_Usuario = ? WHERE ID_Usuario = ?");
                 $update_pass->execute([$new_pass, $user_id]);
                 $success_msg[] = 'Contraseña actualizada correctamente';
             } else {
@@ -96,14 +97,14 @@ if (isset($_POST['submit'])) {
     $payment_method = $_POST['payment-method'];
     $payment_method = htmlspecialchars($payment_method);
     if (!empty($payment_method) and $_POST['submit']) {
-        $update_user = $conn->prepare("UPDATE usuario SET metodo_pago = ? WHERE ID_Usuario = ?");
+        $update_user = $pdo->prepare("UPDATE usuario SET metodo_pago = ? WHERE ID_Usuario = ?");
         $update_user->execute([$payment_method, $user_id]);
         $success_msg[] = 'metodo de pago actualizado';
     }
 }
 // Actualizar direccion
 if (isset($_POST['address'])) {
-    $select_old_address = $conn->prepare("SELECT direccion_Usuario FROM usuario WHERE ID_Usuario = ?");
+    $select_old_address = $pdo->prepare("SELECT direccion_Usuario FROM usuario WHERE ID_Usuario = ?");
     $select_old_address->execute([$user_id]);
     $fetch_prev_address = $select_old_address->fetch(PDO::FETCH_ASSOC);
     $prev_address = $fetch_prev_address['direccion_Usuario'];
@@ -112,7 +113,7 @@ if (isset($_POST['address'])) {
     $address = $_POST['address'];
     $address = htmlspecialchars($address);
     if (!empty($address) and $address != $prev_address) {
-        $update_user = $conn->prepare("UPDATE usuario SET direccion_Usuario = ? WHERE ID_Usuario = ?");
+        $update_user = $pdo->prepare("UPDATE usuario SET direccion_Usuario = ? WHERE ID_Usuario = ?");
         $update_user->execute([$address, $user_id]);
         $success_msg[] = 'Direccion actualizada';
     }
@@ -125,12 +126,12 @@ if (isset($_POST['barrio'])) {
 
     $barrio = $_POST['barrio'];
     $barrio = htmlspecialchars($barrio);
-    $select_old_barrio = $conn->prepare("SELECT barrio_Usuario FROM usuario WHERE ID_Usuario = ?");
+    $select_old_barrio = $pdo->prepare("SELECT barrio_Usuario FROM usuario WHERE ID_Usuario = ?");
     $select_old_barrio->execute([$user_id]);
     $fetch_prev_barrio = $select_old_barrio->fetch(PDO::FETCH_ASSOC);
     $prev_barrio = $fetch_prev_barrio['barrio_Usuario'];
     if (!empty($barrio) and $barrio != $prev_barrio) {
-        $update_user = $conn->prepare("UPDATE usuario SET barrio_Usuario = ? WHERE ID_Usuario = ?");
+        $update_user = $pdo->prepare("UPDATE usuario SET barrio_Usuario = ? WHERE ID_Usuario = ?");
         $update_user->execute([$barrio, $user_id]);
         $success_msg[] = 'Barrio actualizado';
     }
@@ -168,7 +169,7 @@ if (isset($_POST['barrio'])) {
             <div class="form-container" id="admin_login">
                 <form action="" method="post" enctype="multipart/form-data">
                     <?php
-                    $select_profile = $conn->prepare("SELECT * FROM usuario WHERE ID_Usuario = ?");
+                    $select_profile = $pdo->prepare("SELECT * FROM usuario WHERE ID_Usuario = ?");
                     $select_profile->execute([$user_id]);
 
                     if ($select_profile->rowCount() > 0) {
