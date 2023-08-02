@@ -74,9 +74,19 @@ function hacerConsulta($datos, $consulta)
 
             $stmt->execute();
             $total_post = $stmt->rowCount();
-
-
             return  $total_post;
+
+        case "consultarDireccion":
+            $query = "SELECT * FROM direccion WHERE id_usuario=?";
+
+            $stmt = $pdo->prepare($query);
+            for ($i = 0; $i < count($datos); $i++) {
+                $stmt->bindValue($i + 1, $datos[$i]);
+            }
+            $stmt->execute();
+            $total_dir = $stmt->rowCount();
+            return  $total_dir;
+
         case "consultarCategorias":
             $query = "SELECT * FROM Categoria";
             $stmt = $pdo->prepare($query);

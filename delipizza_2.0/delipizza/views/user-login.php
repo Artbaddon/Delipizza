@@ -40,7 +40,7 @@ if (isset($_POST['submit'])) {
 
     <!-- Box Icon CDN list  -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Admin - Delipizza</title>
+    <title>User Login  - Delipizza</title>
 </head>
 
 <body>

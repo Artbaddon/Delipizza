@@ -108,7 +108,7 @@ if (isset($_POST['submit'])) {
 if (isset($_POST['address'])) {
     $address = $_POST['address'];
     $address = htmlspecialchars($address);
-    if (!empty($address) and $_POST['submit'] and $address != '') {
+    if (!empty($address) and $address != '') {
         $update_user = $pdo->prepare("UPDATE usuario SET direccion_Usuario = ? WHERE ID_Usuario = ?");
         $update_user->execute([$address, $user_id]);
         $success_msg[] = 'Direccion actualizada';
@@ -121,7 +121,7 @@ if (isset($_POST['address'])) {
 if (isset($_POST['barrio'])) {
     $barrio = $_POST['barrio'];
     $barrio = htmlspecialchars($barrio);
-    if (!empty($barrio) and $_POST['submit'] and $barrio != '') {
+    if (!empty($barrio) and $barrio != '') {
         $update_user = $pdo->prepare("UPDATE usuario SET barrio_Usuario = ? WHERE ID_Usuario = ?");
         $update_user->execute([$barrio, $user_id]);
         $success_msg[] = 'Barrio actualizado';
@@ -197,18 +197,9 @@ if (isset($_POST['barrio'])) {
                         <label for="name">Nombre Completo <sup>*</sup></label>
                         <input type="text" name="name" maxlength="30" placeholder="Ingrese nombre completo" oninput="this.value.replace(/\s/g,'') " pattern="^[a-zA-Z ]+$" value="<?= $fetch_profile['nombre_Usuario']; ?>">
                     </div>
-                    <div class="input-field">
-                        <label for="email"> Email <sup>*</sup></label>
-                        <input type="email" name="email" maxlength="25" placeholder="Ingrese su email" oninput="this.value.replace(/\s/g,'')" value="<?= $fetch_profile['email_Usuario']; ?>">
-                    </div>
-                    <div class="input-field">
-                        <label for="phone"> Telefono <sup>*</sup></label>
-                        <input type="number" name="phone" maxlength="10" placeholder="Ingrese su telefono" oninput="this.value.replace(/\s/g,'')" minlength="10" value="<?= $fetch_profile['telefono_Usuario']; ?>">
-                    </div>
-                    <div class="input-field">
-                        <label for="address">Direccion <sup>*</sup></label>
-                        <input type="text" name="address" maxlength="60" placeholder="Ingrese su Direccion" oninput="this.value.replace(/\s/g,'') " value="<?= $fetch_profile['direccion_Usuario']; ?>">
-                    </div>
+                        <?php
+                            if
+                        ?>
                     <div class="input-field">
                         <label for="barrio">Barrio <sup>*</sup></label>
                         <input type="text" name="barrio" maxlength="30" placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " value="<?= $fetch_profile['barrio_Usuario']; ?>">

@@ -1,7 +1,20 @@
 <?php
-session_start();
 include '../components/connect.php';
 include '../components/queries.php';
+
+
+session_start();
+if (isset($_SESSION)) {
+  $user_id = $_SESSION['user_id'];
+}
+
+if (!isset($user_id)) {
+  $warning_msg[] = 'Inicie sesion para continuar';
+  header('location:user-login.php');
+}
+$info_direc = hacerConsulta($user_id, "consultarDireccion");
+
+var_dump($info_direc);
 
 $time = time();
 
@@ -16,12 +29,6 @@ if (isset($_POST['add_to_cart'])) {
   $select_img = $pdo->prepare("SELECT img_Producto FROM producto WHERE ID_producto = ?");
   $select_img->execute([$product_id]);
   $product_img = $select_img->fetchColumn();
-
-
-
-
-
-
 
   // Check if item already exists in cart
   if (isset($_SESSION['cart'][$product_id])) {
@@ -49,16 +56,20 @@ if (isset($_POST['update_quantity'])) {
   $quantity = $_POST['quantity'];
   $_SESSION['cart'][$product_id]['quantity'] = $quantity;
 }
+
+
+
+
 // Add direccion to database
-$direccion = $_POST['direccion'];
-$barrio = $_POST['barrio'];
-$localidad = $_POST['localidad'];
-$user_id = $_SESSION['user_id'];
+if (isset($_POST['make_order'])) {
 
-$datos = array($user_id, $direccion, $barrio, $localidad);
-if ($datos != null && isset($_POST['make_order'])) {
-  $query1 = "INSERT IGNORE INTO direccion (ID_usuario,direccion, barrio, localidad) VALUES (?,?,?,?)";
+  $cart_items = $_SESSION['cart'];
+  $direccion = $_POST['direccion'];
+  $barrio = $_POST['barrio'];
+  $localidad = $_POST['localidad'];
+  $datos = array($user_id, $direccion, $barrio, $localidad);
 
+  $query1 = "SELECT * FROM direccion WHERE ID_usuario= ? AND direccion = ? AND barrio=? AND localidad=?";
   $stmt = $pdo->prepare($query1);
   for ($i = 0; $i < count($datos); $i++) {
     $stmt->bindValue($i + 1, $datos[$i]);
@@ -66,18 +77,16 @@ if ($datos != null && isset($_POST['make_order'])) {
   $stmt->execute();
   if ($stmt->rowCount() == 0) {
     $query1 = "INSERT INTO direccion (ID_usuario,direccion, barrio, localidad) VALUES (?,?,?,?)";
-    $stmt = $pdo->prepare($query1);
+    $stmt1 = $pdo->prepare($query1);
     for ($i = 0; $i < count($datos); $i++) {
-      $stmt->bindValue($i + 1, $datos[$i]);
+      $stmt1->bindValue($i + 1, $datos[$i]);
     }
-    $stmt->execute();
-    if ($stmt->rowCount() > 0) {
+    $stmt1->execute();
+    if ($stmt1->rowCount() > 0) {
       $success_msg[] = "Direccion añadida con éxito";
-    } else {
-      $warning_msg[] = "Error al añadir la direccion";
     }
   } else {
-    $warning_msg[] = "Error al añadir la direccion";
+    $warning_msg[] = "Error al añadir la direccion, ya existe";
   }
 }
 
@@ -87,14 +96,10 @@ $total_price = 0;
 
 if (isset($_POST['make_order'])) {
 
-  $user_id = $_SESSION['user_id'];
-  $cart_items = $_SESSION['cart'];
-
   foreach ($cart_items as $product_id => $product) {
     $name = $product['name'];
     $price = $product['price'];
     $quantity = $product['quantity'];
-
 
     $total_price += $product['price'] * $product['quantity'];
     $datos = array($user_id, date("Y-m-d h:i:sa, $time"), "En preparacion");
@@ -213,18 +218,18 @@ if (isset($_POST['make_order'])) {
           <form action='' method='post'>
             <div class="input-field">
               <label for="direccion">Direccion</label>
-              <input type="text" name="direccion" maxlength="30" required placeholder="Ingrese su direccion" oninput="this.value.replace(/\s/g,'') " pattern="" required>
+              <input type="text" name="direccion" maxlength="30" required placeholder="Ingrese su direccion" oninput="this.value.replace(/\s/g,'') " required>
 
 
             </div>
             <div class="input-field">
               <label for="barrio">Barrio</label>
-              <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " pattern="" required>
+              <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " required>
 
 
               <div class="input-field">
                 <label for="localidad">Localidad</label>
-                <input type="text" name="localidad" maxlength="30" required placeholder="Ingrese su localidad" oninput="this.value.replace(/\s/g,'') " pattern="" required>
+                <input type="text" name="localidad" maxlength="30" required placeholder="Ingrese su localidad" oninput="this.value.replace(/\s/g,'') " required>
               </div>
               <?php
               echo "Precio total: $" . number_format($total_price, 2); ?>
