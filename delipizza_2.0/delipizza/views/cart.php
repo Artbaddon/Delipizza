@@ -7,9 +7,9 @@ session_start();
 if (isset($_SESSION)) {
   $user_id = $_SESSION['user_id'];
   $info_direc = hacerConsulta($user_id, "consultarDireccion");
-  
-$datosDir=hacerConsulta($datos,"traerDireccion");
-var_dump($datosDir);
+
+  $datosDir = hacerConsulta($datos, "traerDireccion");
+  var_dump($datosDir);
 }
 
 if (!isset($user_id)) {
@@ -18,7 +18,7 @@ if (!isset($user_id)) {
 }
 
 
-var_dump($info_direc);
+
 
 $time = time();
 

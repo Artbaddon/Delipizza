@@ -80,7 +80,7 @@ function hacerConsulta($datos, $consulta)
             $query = "SELECT * FROM direccion WHERE id_usuario=?";
 
             $stmt = $pdo->prepare($query);
-         
+
             $stmt->execute([$datos]);
             $total_dir = $stmt->rowCount();
             return  $total_dir;
@@ -112,11 +112,11 @@ function hacerConsulta($datos, $consulta)
                 }
             }
             return $productosArray;
+
         case "traerDireccion":
-       
-            $query = "SELECT * FROM direccion WHERE id_usuario=?";
+            $query = "SELECT * FROM direccion WHERE ID_usuario=?";
             $stmt = $pdo->prepare($query);
-          
+
             $stmt->execute([$datos]);
 
             if ($stmt->rowCount() > 0) {
@@ -125,13 +125,14 @@ function hacerConsulta($datos, $consulta)
                 foreach ($direccion as $dir) {
                     $direccionArray[] = array(
                         'direccion' => $dir['direccion'],
-                        'bario' => $dir['barrio'],
+                        'barrio' => $dir['barrio'],
                         'localidad' => $dir['localidad']
-                      
+
                     );
                 }
             }
             return $direccionArray;
+
 
         case "traerProductosPrincipales":
             $query = "SELECT * FROM producto WHERE CategoriaID>? AND estado=?";
