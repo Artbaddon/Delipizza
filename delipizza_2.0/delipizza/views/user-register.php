@@ -4,8 +4,11 @@ include '../components/queries.php';
 
 
 session_start();
+$user_id = '';
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+}
 
-$user_id = $_SESSION['user_id'];
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $name = htmlspecialchars($name);
@@ -16,11 +19,6 @@ if (isset($_POST['submit'])) {
     $payment_method = $_POST['payment_method'];
     $payment_method = htmlspecialchars($payment_method);
 
-    $address = $_POST['address'];
-    $address = htmlspecialchars($address);
-
-    $barrio = $_POST['barrio'];
-    $barrio = htmlspecialchars($barrio);
 
     $phone = $_POST['phone'];
     $phone = htmlspecialchars($phone);
@@ -39,19 +37,18 @@ if (isset($_POST['submit'])) {
     $image = $_FILES['profile-p']['name'];
     $image = htmlspecialchars($image);
     $image_tmp_name = $_FILES['profile-p']['tmp_name'];
-    $image_folder = '../uploaded-img/clientes/
-    ' . $image;
+    $image_folder = '../uploaded-img/clientes/' . $image;
 
-    $select_admin = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario  = ?");
-    $select_admin->execute([$email]);
-    if ($select_admin->rowCount() > 0) {
+    $select_user = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario  = ?");
+    $select_user->execute([$email]);
+    if ($select_user->rowCount() > 0) {
         $warning_msg[] = 'El email del usuario ya existe';
     } else {
         if ($pass != $cpass) {
             $warning_msg[] = 'Las contraseñas no coinciden';
         } else {
-            $insert_admin = $pdo->prepare("INSERT INTO usuario (nombre_Usuario, email_Usuario, telefono_Usuario, contraseña_Usuario, direccion_Usuario, metodo_pago, barrio_Usuario, foto) VALUES (?, ?, ?, ?,?,?,?,?)");
-            $insert_admin->execute([$name, $email, $phone, $cpass, $address, $payment_method, $barrio, $image]);
+            $insert_user = $pdo->prepare("INSERT INTO usuario (nombre_Usuario, email_Usuario, telefono_Usuario, contraseña_Usuario, metodo_pago, foto) VALUES (?, ?, ?, ?,?,?)");
+            $insert_user->execute([$name, $email, $phone, $cpass, $payment_method, $image]);
             move_uploaded_file($image_tmp_name, $image_folder);
             $success_msg[] = 'Registro de Usuario exitoso';
         }
@@ -73,7 +70,7 @@ if (isset($_POST['submit'])) {
     <!-- Box Icon CDN list  -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-    <title>Actualizar Datos - Usuario</title>
+    <title>Registro - Usuario</title>
 </head>
 
 <body>
@@ -82,7 +79,7 @@ if (isset($_POST['submit'])) {
 
         <section class="register-container">
             <div>
-                <div class="form-container" id="admin_login">
+                <div class="form-container" id="user_login">
                     <form action="" method="post" enctype="multipart/form-data">
                         <h3>Registro de Persona</h3>
                         <div class="input-field">
@@ -97,14 +94,7 @@ if (isset($_POST['submit'])) {
                             <label for="phone"> Telefono <sup>*</sup></label>
                             <input type="tel" name="phone" maxlength="10" required placeholder="XXX-XXX-XXXX" oninput="this.value.replace(/\s/g,'')" minlength="10">
                         </div>
-                        <div class="input-field">
-                            <label for="address">Direccion <sup>*</sup></label>
-                            <input type="text" name="address" maxlength="60" required placeholder="Ingrese su Direccion" oninput="this.value.replace(/\s/g,'') ">
-                        </div>
-                        <div class="input-field">
-                            <label for="barrio">Barrio <sup>*</sup></label>
-                            <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') ">
-                        </div>
+                        
                         <div class="input-field">
                             <label for="payment-method">
                                 <select name="payment_method" id="payment_method">Metodo de pago </label>

@@ -5,10 +5,15 @@ session_start();
 
 $user_id = "";
 $user_id = $_SESSION['user_id'];
+
 if (!isset($user_id)) {
   $warning_msg[] = 'Inicie sesion para continuar';
   header('location:views/user-login.php');
 }
+$informacionProductosR = hacerConsulta('', "traerProductosRecomendados");
+$categoriaProductos = hacerConsulta("", "traerCategorias");
+$consultarUsuario = hacerConsulta("2", "consultarUsuario");
+
 
 ?>
 
@@ -127,9 +132,10 @@ if (isset($_GET['producto']) and $_GET['producto'] != "") {
           <form action="cart.php" method="post">
             <input type="hidden" name="product_id" value="<?= $product['ID_producto']; ?>">
             <input type="hidden" name="product_name" value="<?= $product['nombre_Producto']; ?>">
+            <input type="hidden" name="product_img" value="<?= $product['img_Producto'] ?>">
 
             <a href="views/view-product.php?product_id=<?= $product['ID_producto']; ?>">
-              <img src="uploaded-img/productos/<?= $product['img_Producto']; ?>" alt="" class="img-product img-curve">
+              <img src="uploaded-img/productos/<?= $product['img_Producto']; ?>" alt="" name="img_Producto" class="img-product img-curve">
             </a>
             <div class="title-container">
               <h4 class="title-product"><?= $product['nombre_Producto'] ?></h4>
@@ -161,31 +167,25 @@ if (isset($_GET['producto']) and $_GET['producto'] != "") {
     <div class="container-cat">
       <h2 class="text-center">Categorias</h2>
       <?php
-      $select_category = $pdo->prepare("SELECT * FROM categoria WHERE ID_Categoria>1 ");
-      $select_category->execute();
-      if ($select_category->rowCount() > 0) {
-        while ($fetch_category = $select_category->fetch(PDO::FETCH_ASSOC)) {
+      foreach ($categoriaProductos as $categoria) { ?>
 
-      ?><a href="views/menu.php#<?= $fetch_category['ID_Categoria']; ?>">
-            <form action="" method="post" class="box-4 float-container">
-              <input type="hidden" name="category_id" value="<?= $fetch_category['ID_Categoria']; ?>">
-              <?php if ($fetch_category['img_Categoria'] != '') { ?>
-                <img src="uploaded-img/Categorias/<?= $fetch_category['img_Categoria']; ?>" alt="" class="img-cat img-curve">
-                <div class="title-container-cat">
-                  <h3 class=""><?= $fetch_category['nombre_Categoria'] ?></h3>
-                </div>
-                <div class="cat-desc-container">
-                  <p class="cat-desc"><?= $fetch_category['desc_Categoria'] ?></p>
-                </div>
-              <?php  } ?>
-            </form>
-          </a>
-
-
-
+        <a href="views/menu.php#<?= $categoria['ID']; ?>">
+          <form action="" method="post" class="box-4 float-container">
+            <input type="hidden" name="category_id" value="<?= $categoria['ID']; ?>">
+            <?php if ($categoria['foto'] != '') { ?>
+              <img src="uploaded-img/categorias/<?= $categoria['foto']; ?>" alt="" class="img-cat img-curve">
+              <div class="title-container-cat">
+                <h3 class=""><?= $categoria['Nombre'] ?></h3>
+              </div>
+              <div class="cat-desc-container">
+                <p class="cat-desc"><?= $categoria['Descripcion'] ?></p>
+              </div>
+            <?php } ?>
+          </form>
+        </a>
       <?php
-        }
       }
+
 
 
       ?>
@@ -199,47 +199,39 @@ if (isset($_GET['producto']) and $_GET['producto'] != "") {
     <div class="container">
       <h2 class="text-center">Productos Recomendados</h2>
       <div class="float-container">
+        <h2>Productos Recomendados</h2>
         <?php
-        $select_category = $pdo->prepare("SELECT * FROM categoria WHERE ID_Categoria = 1");
-        $select_category->execute();
-        $categories = $select_category->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($categories as $category) {
+
+        foreach ($informacionProductosR as $product) {
         ?>
-          <h2><?= $category['nombre_Categoria'] ?></h2>
 
 
-          <?php
-          $select_product = $pdo->prepare("SELECT * FROM producto  WHERE CategoriaID =? AND estado='activo'");
-          $select_product->execute([$category['ID_Categoria']]);
-          $fetch_product = $select_product->fetchAll(PDO::FETCH_ASSOC);
-          foreach ($fetch_product as $product) {
-          ?>
-            <div class="box-menu">
+          <div class="box-menu">
 
-              <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-              <form action="cart.php" method="post" target="dummyframe" onsubmit="alert('Producto añadido al carrito');">
-                <input type="hidden" name="product_id" value="<?= $product['ID_producto']; ?>">
-                <input type="hidden" name="product_name" value="<?= $product['nombre_Producto']; ?>">
-                <input type="hidden" name="product_price" value="<?= $product['precio_Producto']; ?>">
-                <a href="view-product.php?product_id=<?= $product['ID_producto']; ?>">
-                  <img src="uploaded-img/productos/<?= $product['img_Producto']; ?>" alt="" class="img-product img-curve">
-                </a>
-                <div class="title-container">
-                  <h4 class="title-product"><?= $product['nombre_Producto'] ?></h4>
-                </div>
-                <div class="cart-container">
+            <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+            <form action="views/cart.php" method="post" target="dummyframe" onsubmit="alert('Producto añadido al carrito');">
+              <input type="hidden" name="product_id" value="<?= $product['ID']; ?>">
+              <input type="hidden" name="product_name" value="<?= $product['Nombre']; ?>">
+              <input type="hidden" name="product_price" value="<?= $product['Precio']; ?>">
+              <a href="view-product.php?product_id=<?= $product['ID']; ?>">
+                <img src="uploaded-img/productos/<?= $product['Img']; ?>" alt="" class="img-product img-curve">
+              </a>
+              <div class="title-container">
+                <h4 class="title-product"><?= $product['Nombre'] ?></h4>
+              </div>
+              <div class="cart-container">
 
-                  <input type="submit" name="add_to_cart" value="Agregar al carrito" class="add-cart">
-                </div>
+                <input type="submit" name="add_to_cart" value="Agregar al carrito" class="add-cart">
+              </div>
 
-                <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" class="quantity">
-                <p class="food-price-menu">$<?= number_format($product['precio_Producto']);  ?></p>
-              </form>
-            </div>
+              <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" class="quantity">
+              <p class="food-price-menu">$<?= number_format($product['Precio']);  ?></p>
+            </form>
+          </div>
         <?php
 
-          }
         }
+
         ?>
       </div>
     </div>

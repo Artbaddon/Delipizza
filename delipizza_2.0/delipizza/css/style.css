@@ -842,24 +842,22 @@ form span {
 }
 .flex-btn {
   display: flex;
-
-
 }
 /* CSS for CART */
 
-.cart-container-shopping{
-
+.cart-container-shopping {
   height: 95vh;
   display: flex;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  right: 50%;
   align-items: center;
   justify-content: center;
 }
 .main-container-cart {
- 
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
-
 }
 
 .main-container-cart h1 {

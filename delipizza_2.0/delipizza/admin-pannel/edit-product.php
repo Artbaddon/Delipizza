@@ -177,7 +177,7 @@ if (isset($_POST['save'])) {
         </section>
     </div>
 
-    <?php include '../components/dark.php'; ?>
+   
     <script src="../js/script.js"></script>
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

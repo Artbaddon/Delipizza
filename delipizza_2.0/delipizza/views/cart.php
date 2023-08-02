@@ -13,6 +13,14 @@ if (isset($_POST['add_to_cart'])) {
   $product_price = $_POST['product_price'];
   $quantity = $_POST['quantity'];
 
+  $select_img = $pdo->prepare("SELECT img_Producto FROM producto WHERE ID_producto = ?");
+  $select_img->execute([$product_id]);
+  $product_img = $select_img->fetchColumn();
+
+
+
+
+
 
 
   // Check if item already exists in cart
@@ -22,7 +30,8 @@ if (isset($_POST['add_to_cart'])) {
     $_SESSION['cart'][$product_id] = array(
       'name' => $product_name,
       'price' => $product_price,
-      'quantity' => $quantity
+      'quantity' => $quantity,
+      'img' => $product_img
     );
   }
 }
@@ -40,6 +49,37 @@ if (isset($_POST['update_quantity'])) {
   $quantity = $_POST['quantity'];
   $_SESSION['cart'][$product_id]['quantity'] = $quantity;
 }
+// Add direccion to database
+$direccion = $_POST['direccion'];
+$barrio = $_POST['barrio'];
+$localidad = $_POST['localidad'];
+$user_id = $_SESSION['user_id'];
+
+$datos = array($user_id, $direccion, $barrio, $localidad);
+if ($datos != null && isset($_POST['make_order'])) {
+  $query1 = "INSERT IGNORE INTO direccion (ID_usuario,direccion, barrio, localidad) VALUES (?,?,?,?)";
+
+  $stmt = $pdo->prepare($query1);
+  for ($i = 0; $i < count($datos); $i++) {
+    $stmt->bindValue($i + 1, $datos[$i]);
+  }
+  $stmt->execute();
+  if ($stmt->rowCount() == 0) {
+    $query1 = "INSERT INTO direccion (ID_usuario,direccion, barrio, localidad) VALUES (?,?,?,?)";
+    $stmt = $pdo->prepare($query1);
+    for ($i = 0; $i < count($datos); $i++) {
+      $stmt->bindValue($i + 1, $datos[$i]);
+    }
+    $stmt->execute();
+    if ($stmt->rowCount() > 0) {
+      $success_msg[] = "Direccion añadida con éxito";
+    } else {
+      $warning_msg[] = "Error al añadir la direccion";
+    }
+  } else {
+    $warning_msg[] = "Error al añadir la direccion";
+  }
+}
 
 // Calculate total price
 $total_price = 0;
@@ -55,19 +95,44 @@ if (isset($_POST['make_order'])) {
     $price = $product['price'];
     $quantity = $product['quantity'];
 
-    $insert_order = $pdo->prepare("INSERT INTO orden (ID_Usuario_pedido , ProductoID, nombre_Producto, precio, cantidad) VALUES (?, ?, ?, ?, ?)");
-    $insert_order->execute([$user_id, $product_id, $name, $price, $quantity]);
-    $select_order = $pdo->prepare("SELECT * FROM orden WHERE ID_Usuario_pedido = ? ");
-    $select_order->execute([$user_id]);
-    $fetch_order = $select_order->fetch(PDO::FETCH_ASSOC);
-    $order_id = $fetch_order['ID_orden'];
-    if ($insert_order->rowCount() > 0) {
-      $total_price += $product['price'] * $product['quantity'];
 
-      $insert_order_details = $pdo->prepare("INSERT INTO detalles_orden (ID_Usuario_pedido , ID_orden, fecha_Orden, estado, total) VALUES (?, ?, ?, ?, ?)");
-      $insert_order_details->execute([$user_id, $order_id, date("Y-m-d h:i:sa, $time"), "En preparacion", $total_price]);
-      if ($insert_order_details->rowCount() > 0) {
+    $total_price += $product['price'] * $product['quantity'];
+    $datos = array($user_id, date("Y-m-d h:i:sa, $time"), "En preparacion");
+    $query = "INSERT INTO orden (ID_usuario, fecha, estado_Orden) VALUES (?,?,?)";
+    $stmt = $pdo->prepare($query);
+    for ($i = 0; $i < count($datos); $i++) {
+      $stmt->bindValue($i + 1, $datos[$i]);
+    }
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+      $order_id = $pdo->lastInsertId();
+      $datos2 = array($order_id, $product_id, $quantity, $price);
+      $query2 = "INSERT INTO detalles_orden ( ID_orden, ID_producto,cantidad,precio_unitario) VALUES (?, ?, ?, ?)";
+      $stmt2 = $pdo->prepare($query2);
+      for ($i = 0; $i < count($datos2); $i++) {
+        $stmt2->bindValue($i + 1, $datos2[$i]);
+      }
+      $stmt2->execute();
+      if ($stmt2->rowCount() > 0) {
         $success_msg[] = "Pedido realizado con éxito";
+        // $select_email = $pdo->prepare("SELECT email_Usuario FROM usuario WHERE ID_Usuario = ?");
+        // $select_email->execute([$user_id]);
+        // $fetch_order_detail = $pdo->prepare("SELECT * FROM detalles_orden INNER JOIN orden ON detalles_orden.ID_Orden = orden.ID_Orden INNER JOIN producto ON detalles_orden.ID_producto = producto.ID_producto JOIN usuario ON orden.ID_usuario = usuario.ID_Usuario WHERE usuario.ID_Usuario = ?");
+        // $fetch_order_detail->execute([$user_id]);
+        // $total_ventas = $pdo->prepare("SELECT SUM(precio_unitario * cantidad) AS total_ventas FROM detalles_orden WHERE ID_orden = ?");
+        // $total_ventas->execute([$order_id]);
+        // $total_ventas = $total_ventas->fetch();
+        // $email = $select_email->fetchColumn();
+
+        // Generate the bill as a string
+        // $bill = "Here is your bill:\n\n";
+        // foreach ($fetch_order_detail as $order_detail) {
+        //   $bill .= $order_detail['nombre_Producto'] . " - $" . $order_detail['precio_unitario'] . "\n";
+        // }
+        // $bill .= "\nTotal: $" . $total_ventas['total_ventas'];
+
+
         $_SESSION['cart'] = array();
         $total_price = 0;
       } else {
@@ -75,11 +140,12 @@ if (isset($_POST['make_order'])) {
       }
     }
   }
-
-  // Clear cart after saving to database
-
-
 }
+
+// Clear cart after saving to database
+
+
+
 ?>
 
 <style>
@@ -119,29 +185,57 @@ if (isset($_POST['make_order'])) {
         foreach ($_SESSION['cart'] as $product_id => $product) {
       ?>
           <div class="cart-item">
+
             <h4><?= $product['name'] ?></h4>
+            <img src="../uploaded-img/productos/<?= $product['img']; ?>" alt="<?= $product['name'] ?>" width="100" style="float:right;">
             <p>Precio: $<?= number_format($product['price'])  ?></p>
+
 
             <form action="" method="POST">
               <input type="hidden" name="product_id" value="<?= $product_id ?>">
+
               <input type="number" name="quantity" min="0" max="20" value="<?= $product['quantity'] ?>">
               <input type="submit" name="update_quantity" value="Actualizar cantidad">
               <input type="submit" name="remove_from_cart" value="Eliminar del carrito">
 
+
             </form>
+
           </div>
-      <?php
+
+
+        <?php
         }
-        
+
         if (!empty($_SESSION['cart'])) {
-          echo "<form action='' method='post'>
-          <input type='submit' name='make_order' value='Hacer pedido'>
-        </form>";
-          echo "Precio total: $" . number_format($total_price, 2);
-        }else{
+
+        ?>
+          <form action='' method='post'>
+            <div class="input-field">
+              <label for="direccion">Direccion</label>
+              <input type="text" name="direccion" maxlength="30" required placeholder="Ingrese su direccion" oninput="this.value.replace(/\s/g,'') " pattern="" required>
+
+
+            </div>
+            <div class="input-field">
+              <label for="barrio">Barrio</label>
+              <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " pattern="" required>
+
+
+              <div class="input-field">
+                <label for="localidad">Localidad</label>
+                <input type="text" name="localidad" maxlength="30" required placeholder="Ingrese su localidad" oninput="this.value.replace(/\s/g,'') " pattern="" required>
+              </div>
+              <?php
+              echo "Precio total: $" . number_format($total_price, 2); ?>
+              <input type='submit' name='make_order' value='Hacer pedido'>
+          </form>
+
+      <?php
+
+        } elseif (isset($_SESSION['cart']) && empty($_SESSION['cart'])) {
           echo "El carrito está vacío.";
         }
-      } else {
       }
 
       //Make order 
@@ -150,6 +244,7 @@ if (isset($_POST['make_order'])) {
 
     </div>
   </section>
+
 
 
   <!-- Sweet alert script -->

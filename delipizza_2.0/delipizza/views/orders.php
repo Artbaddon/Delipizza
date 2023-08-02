@@ -85,31 +85,30 @@ if (!isset($user_id)) {
                     </thead>
                     <tbody>
                         <?php
-                        $select_orders = $pdo->prepare("SELECT * FROM orden WHERE ID_Usuario_pedido  = ? ");
+                        $select_orders = $pdo->prepare("SELECT * FROM orden WHERE ID_Usuario  = ? ");
                         $select_orders->execute([$user_id]);
-                    
 
 
                         if ($select_orders->rowCount() > 0) {
-                            while ($fetch_orders = $select_orders->fetch()) {
-                                $select_product = $pdo->prepare("SELECT * FROM producto WHERE ID_producto = ?");
-                                $select_product->execute([$fetch_orders['ProductoID']]);
-                                $fetch_product = $select_product->fetch(PDO::FETCH_ASSOC);
 
-                                $select_order_detail = $pdo->prepare("SELECT * FROM detalles_orden WHERE ID_Usuario_pedido = ?");
-                                $select_order_detail->execute([$user_id]);
-                                $fetch_order_detail = $select_order_detail->fetch(PDO::FETCH_ASSOC);
-                               
+
+                            $select_order_detail = $pdo->prepare("SELECT * FROM detalles_orden INNER JOIN orden ON detalles_orden.ID_Orden = orden.ID_Orden INNER JOIN producto ON detalles_orden.ID_producto = producto.ID_producto JOIN usuario ON orden.ID_usuario = usuario.ID_Usuario WHERE usuario.ID_Usuario = ?");
+                            $select_order_detail->execute([$user_id]);
+                            $fetch_order_detail = $select_order_detail->fetchAll();
+                            foreach ($fetch_order_detail as $order_detail) {
+
+
+
                         ?>
-                        
+
                                 <tr>
-                                    
-                                    <td><?= $fetch_order_detail['ID_Orden']; ?></td>
-                                    <td><?= $fetch_order_detail['fecha_Orden']; ?></td>
-                                    <td><?= $fetch_order_detail['estado']; ?></td>
-                                    <td><?= $fetch_product['nombre_Producto']; ?></td>
-                                    <td><?= $fetch_orders['cantidad']; ?></td>
-                                    <td>$<?= $fetch_orders['precio']; ?></td>
+
+                                    <td><?= $order_detail['ID_orden'];?></td>
+                                    <td><?= $order_detail['fecha']; ?></td>
+                                    <td><?= $order_detail['estado_Orden']; ?></td>
+                                    <td><?= $order_detail['nombre_Producto']; ?></td>
+                                    <td><?= $order_detail['cantidad']; ?></td>
+                                    <td>$<?= $order_detail['precio_Producto']; ?></td>
 
 
                                 </tr>
@@ -125,7 +124,7 @@ if (!isset($user_id)) {
 
         </section>
     </div>
-    <?php include '../components/dark.php'; ?>
+
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- Custom JS -->

@@ -9,10 +9,10 @@ if (!isset($admin_id)) {
     $warning_msg[] = 'Inicie sesión para continuar';
     header('location:admin-login.php');
 }
-$total_active_post=hacerConsulta('activo',"consultarEstadoProductos");
-$total_deactive_post=hacerConsulta('inactivo',"consultarEstadoProductos");
-$total_post=hacerConsulta('0','consultarProductos');
-$total_category=hacerConsulta('0','consultarCategorias');
+$total_active_post = hacerConsulta('activo', "consultarEstadoProductos");
+$total_deactive_post = hacerConsulta('inactivo', "consultarEstadoProductos");
+$total_post = hacerConsulta('0', 'consultarProductos');
+$total_category = hacerConsulta('0', 'consultarCategorias');
 
 
 
@@ -49,7 +49,7 @@ $total_category=hacerConsulta('0','consultarCategorias');
                     <a href="update-profile.php" class="btn">Actualizar Perfil</a>
                 </div>
                 <div class="box">
-                 
+
 
                     <h3><?= $total_post; ?></h3>
                     <p>productos añadidos</p>
@@ -67,7 +67,7 @@ $total_category=hacerConsulta('0','consultarCategorias');
                 </div>
                 <div class="box">
                     <?php
-                   
+
                     ?>
                     <h3><?= $total_deactive_post ?></h3>
                     <p>Post Inactivos</p>
@@ -104,37 +104,34 @@ $total_category=hacerConsulta('0','consultarCategorias');
                     <p>Numero de administradores</p>
                     <a href="#" class="btn">Ver admins</a>
                 </div>
-             
+
                 <div class="box">
                     <?php
-                    $select_total_orden = $pdo->prepare("SELECT COUNT(DISTINCT ID_Orden) FROM detalles_orden");
+                    $select_total_orden = $pdo->prepare("SELECT COUNT(ID_Orden) FROM orden");
                     $select_total_orden->execute();
                     $total_orden = $select_total_orden->fetch();
-                
+
                     ?>
-                    <h3><?= $total_orden['0']; ?></h3>
-                    <p>Numero de Ordenes Unicas</p>
+                    <h3><?= $total_orden['COUNT(ID_Orden)']; ?></h3>
+                    <p>Numero de Ordenes</p>
 
                 </div>
                 <div class="box">
                     <?php
-                    $select_total_ventas = $pdo->prepare("SELECT SUM(total) FROM detalles_orden");
+                    $select_total_ventas = $pdo->prepare("SELECT SUM(precio_unitario) AS total_ventas FROM detalles_orden");
                     $select_total_ventas->execute();
-                    $total_ventas=$select_total_ventas->fetch();
-                
-               
-                
-                    ?>
-                    <h3>$ <?= number_format($total_ventas['0']) ; ?></h3>
-                    <p>Total ventas</p>
+                    $total_ventas = $select_total_ventas->fetch();
 
+                    ?>
+                    <h3>$ <?= number_format($total_ventas['total_ventas']); ?></h3>
+                    <p>Total ventas</p>
                 </div>
             </div>
 
         </section>
     </div>
 
-    <?php include '../components/dark.php'; ?>
+
     <script src="../js/script.js"></script>
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

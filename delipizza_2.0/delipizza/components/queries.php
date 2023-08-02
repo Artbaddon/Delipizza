@@ -84,10 +84,31 @@ function hacerConsulta($datos, $consulta)
             $total_post = $stmt->rowCount();
 
             return  $total_post;
+        case 'traerProductosRecomendados':
+            $query = "SELECT * FROM producto WHERE CategoriaID=? AND estado=? LIMIT 4";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([1, "activo"]);
+            if ($stmt->rowCount() > 0) {
+                $productos = $stmt->fetchAll();
+                $productosArray = array();
+                foreach ($productos as $producto) {
+                    $productosArray[] = array(
+                        'ID' => $producto['ID_producto'],
+                        'Nombre' => $producto['nombre_Producto'],
+                        'Precio' => $producto['precio_Producto'],
+                        'Img' => $producto['img_Producto'],
+                        'Descripcion' => $producto['descripcion_Producto'],
+                        'Estado' => $producto['estado'],
+                        'Categoria' => $producto['CategoriaID']
+                    );
+                }
+            }
+            return $productosArray;
 
         case "traerProductosPrincipales":
             $query = "SELECT * FROM producto WHERE CategoriaID>? AND estado=?";
             $stmt = $pdo->prepare($query);
+
             $stmt->execute([$datos, "activo"]);
 
             if ($stmt->rowCount() > 0) {
@@ -115,7 +136,7 @@ function hacerConsulta($datos, $consulta)
             $query = "SELECT * FROM categoria WHERE ID_Categoria>?";
 
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$datos]);
+            $stmt->execute([1]);
             if ($stmt->rowCount() > 0) {
                 $categorias = $stmt->fetchAll();
                 $categoriasArray = array();
