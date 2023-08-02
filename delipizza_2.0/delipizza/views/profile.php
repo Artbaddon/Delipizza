@@ -5,6 +5,7 @@ include '../components/queries.php';
 
 session_start();
 $user_id = '';
+$info_direc = hacerConsulta($user_id, "consultarDireccion");
 if (!isset($_SESSION['user_id'])) {
     header('location:user-login.php');
     exit();
@@ -198,7 +199,7 @@ if (isset($_POST['barrio'])) {
                         <input type="text" name="name" maxlength="30" placeholder="Ingrese nombre completo" oninput="this.value.replace(/\s/g,'') " pattern="^[a-zA-Z ]+$" value="<?= $fetch_profile['nombre_Usuario']; ?>">
                     </div>
                         <?php
-                            if
+                            if()
                         ?>
                     <div class="input-field">
                         <label for="barrio">Barrio <sup>*</sup></label>

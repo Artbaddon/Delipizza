@@ -6,13 +6,14 @@ include '../components/queries.php';
 session_start();
 if (isset($_SESSION)) {
   $user_id = $_SESSION['user_id'];
+  $info_direc = hacerConsulta($user_id, "consultarDireccion");
 }
 
 if (!isset($user_id)) {
   $warning_msg[] = 'Inicie sesion para continuar';
   header('location:user-login.php');
 }
-$info_direc = hacerConsulta($user_id, "consultarDireccion");
+
 
 var_dump($info_direc);
 
