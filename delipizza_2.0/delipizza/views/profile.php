@@ -5,11 +5,12 @@ include '../components/queries.php';
 
 session_start();
 $user_id = '';
-$info_direc = hacerConsulta($user_id, "consultarDireccion");
+$total_dir = hacerConsulta($user_id, "consultarDireccion");
+$info_direc = hacerConsulta($user_id, "traerDireccion");
 if (!isset($_SESSION['user_id'])) {
     header('location:user-login.php');
     exit();
-} 
+}
 
 $user_id = $_SESSION['user_id'];
 
@@ -105,27 +106,41 @@ if (isset($_POST['submit'])) {
         $success_msg[] = 'metodo de pago actualizado';
     }
 }
+
 // Actualizar direccion
-if (isset($_POST['address'])) {
+// if (isset($_POST['address'])) {
+//     $address = $_POST['address'];
+//     $address = htmlspecialchars($address);
+//     if (!empty($address) and $address != '') {
+//         $update_user = $pdo->prepare("UPDATE usuario SET direccion_Usuario = ? WHERE ID_Usuario = ?");
+//         $update_user->execute([$address, $user_id]);
+//         $success_msg[] = 'Direccion actualizada';
+//     }
+// }
+// Actualizar Barrio
+// if (isset($_POST['barrio'])) {
+   
+//     if (!empty($barrio) and $barrio != '') {
+//         $inser = $pdo->prepare("UPDATE usuario SET barrio_Usuario = ? WHERE ID_Usuario = ?");
+//         $update_user->execute([$barrio, $user_id]);
+//         $success_msg[] = 'Barrio actualizado';
+//     }
+// }
+// Actualizar Barrio
+if (isset($_POST['localidad'])) {
+    
     $address = $_POST['address'];
     $address = htmlspecialchars($address);
-    if (!empty($address) and $address != '') {
-        $update_user = $pdo->prepare("UPDATE usuario SET direccion_Usuario = ? WHERE ID_Usuario = ?");
-        $update_user->execute([$address, $user_id]);
-        $success_msg[] = 'Direccion actualizada';
-    }
-}
-
-
-
-// Actualizar Barrio
-if (isset($_POST['barrio'])) {
     $barrio = $_POST['barrio'];
     $barrio = htmlspecialchars($barrio);
-    if (!empty($barrio) and $barrio != '') {
-        $update_user = $pdo->prepare("UPDATE usuario SET barrio_Usuario = ? WHERE ID_Usuario = ?");
-        $update_user->execute([$barrio, $user_id]);
-        $success_msg[] = 'Barrio actualizado';
+    $localidad=$_POST['localidad'];
+        
+    $localidad = htmlspecialchars($localidad);
+
+    if (!empty($localidad) and !empty($addres) and !empty($barrio)) {
+        $insert_localidad= $pdo->prepare("INSERT INTO direccion( VALUES ");
+        $insert_localidad->execute([$barrio, $user_id]);
+        $success_msg[] = 'localidad actualizada';
     }
 }
 
@@ -196,15 +211,32 @@ if (isset($_POST['barrio'])) {
                     <input type="hidden" name="old_img" value="<?= $fetch_profile['foto']; ?>">
                     <div class="input-field">
                         <label for="name">Nombre Completo <sup>*</sup></label>
-                        <input type="text" name="name" maxlength="30" placeholder="Ingrese nombre completo" oninput="this.value.replace(/\s/g,'') " pattern="^[a-zA-Z ]+$" value="<?= $fetch_profile['nombre_Usuario']; ?>">
+                        <input type="text" name="name" maxlength="30" placeholder="Ingrese nombre completo" oninput="this.value.replace(/\s/g,'') " pattern="^[a-zA-Z ]+$" value="">
                     </div>
-                        <?php
-                            if()
-                        ?>
+
+
+                    <div class="input-field">
+                        <label for="email"> Email <sup>*</sup></label>
+                        <input type="email" name="email" maxlength="25" placeholder="Ingrese su email" oninput="this.value.replace(/\s/g,'')" value="">
+                    </div>
+                    <div class="input-field">
+                        <label for="phone"> Telefono <sup>*</sup></label>
+                        <input type="number" name="phone" maxlength="10" placeholder="Ingrese su telefono" oninput="this.value.replace(/\s/g,'')" minlength="10" value="">
+                    </div>
+                    <div class="input-field">
+                        <label for="address">Direccion <sup>*</sup></label>
+                        <input type="text" name="address" maxlength="60" placeholder="Ingrese su Direccion" oninput="this.value.replace(/\s/g,'') " value="" id="direccion">
+                    </div>
                     <div class="input-field">
                         <label for="barrio">Barrio <sup>*</sup></label>
-                        <input type="text" name="barrio" maxlength="30" placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " value="<?= $fetch_profile['barrio_Usuario']; ?>">
+                        <input type="text" name="barrio" maxlength="60" placeholder="Ingrese su Barrio" oninput="this.value.replace(/\s/g,'') " value="" id="barrio">
                     </div>
+                    <div class="input-field">
+                        <label for="localidad">Barrio <sup>*</sup></label>
+                        <input type="text" name="localidad" maxlength="60" placeholder="Ingrese su Barrio" oninput="this.value.replace(/\s/g,'') " value="" id="localidad">
+                    </div>
+
+
                     <div class="input-field">
                         <label for="payment-method">
                             <select name="payment-method" id="">
