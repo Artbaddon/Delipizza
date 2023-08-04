@@ -76,8 +76,8 @@ function hacerConsulta($datos, $consulta)
             $total_post = $stmt->rowCount();
             return  $total_post;
 
-        case "consultarDireccion":
-            $query = "SELECT * FROM direccion WHERE id_usuario=?";
+        case "consultarDireccion":  
+            $query = "SELECT * FROM direccion WHERE ID_usuario=?";
 
             $stmt = $pdo->prepare($query);
 

@@ -5,17 +5,20 @@ include '../components/queries.php';
 
 session_start();
 $user_id = '';
-$info_direc = hacerConsulta($user_id, "consultarDireccion");
-
-$datosDir = hacerConsulta($datos, "traerDireccion");
-var_dump($datosDir);
-
+$user_id = $_SESSION['user_id'];
 if (!isset($_SESSION['user_id'])) {
     header('location:user-login.php');
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+
+$info_direc = hacerConsulta($user_id, "consultarDireccion");
+
+$datosDir = hacerConsulta($user_id, "traerDireccion");
+
+
+
+
 
 if (isset($_POST['submit'])) {
     //Actualizar nombre
@@ -129,8 +132,9 @@ if (isset($_POST['submit'])) {
 //         $success_msg[] = 'Barrio actualizado';
 //     }
 // }
-// Actualizar Barrio
-if (isset($_POST['localidad']) and isset($_POST['addres']) and isset($_POST['barrio'])) {
+// Insertar Direccion:
+
+if (isset($_POST['localidad']) and isset($_POST['address']) and isset($_POST['barrio'])) {
 
     $address = $_POST['address'];
     $address = htmlspecialchars($address);
@@ -139,13 +143,20 @@ if (isset($_POST['localidad']) and isset($_POST['addres']) and isset($_POST['bar
     $localidad = $_POST['localidad'];
     $localidad = htmlspecialchars($localidad);
 
-    if($address!=$dir['direccion'] or $barrio!=$dir['barrio'] or $localidad!=$dir['localidad'])
-    $insert_dir = $pdo->prepare("INSERT INTO direccion(ID_usuario,direccion,barrio,localidad) VALUES(?,?,?,?) ");
-    $insert_dir->execute([$user_id, $addres, $barrio, $localidad]);
-    if ($inser_id->rowCount() > 0) {
-        $success_msg[] = 'direccion agregada a db';
-    } else {
-        $warning_msg[] = 'fallo all insertar direccion';
+
+    if ($address != '' or $barrio != ''  or $localidad != '') {
+        if ($info_direc == 0) {
+            $insert_dir = $pdo->prepare("INSERT INTO direccion(ID_usuario,direccion,barrio,localidad) VALUES(?,?,?,?) ");
+            $insert_dir->execute([$user_id, $address, $barrio, $localidad]);
+            if ($insert_dir->rowCount() > 0) {
+
+                $success_msg[] = 'direccion agregada a db';
+            } else {
+                $warning_msg[] = 'fallo all insertar direccion';
+            }
+        }else{
+            
+        }
     }
 }
 
@@ -244,13 +255,13 @@ if (isset($_POST['localidad']) and isset($_POST['addres']) and isset($_POST['bar
 
                     <div class="input-field">
                         <label for="payment-method"> Metodo pago</label>
-                            <select name="payment-method" id="payment-method">
+                        <select name="payment-method" id="payment-method">
 
-                                <option selected value="">Anterior metodo de pago: <?= $fetch_profile['metodo_pago']; ?></option>
-                                <option value="nequi">nequi</option>
-                                <option value="efectivo">efectivo</option>
-                            </select>
-                       
+                            <option selected value="">Anterior metodo de pago: <?= $fetch_profile['metodo_pago']; ?></option>
+                            <option value="nequi">nequi</option>
+                            <option value="efectivo">efectivo</option>
+                        </select>
+
                     </div>
                     <div class="input-field">
                         <label for="pass">Contraseña Actual<sup>*</sup></label>
@@ -283,11 +294,10 @@ if (isset($_POST['localidad']) and isset($_POST['addres']) and isset($_POST['bar
     <!-- Custom JS -->
     <script src="../js/script1.js"></script>
     <?php include '../components/alert.php';
-    
-    var_dump($datosDir);
+
+
     ?>
 
 </body>
 
 </html>
-
