@@ -3,15 +3,19 @@ include '../components/connect.php';
 include '../components/queries.php';
 
 
+
 session_start();
 if (isset($_SESSION)) {
   $user_id = $_SESSION['user_id'];
-  $info_direc = hacerConsulta($user_id, "consultarDireccion");
+
 
   $datosDir = hacerConsulta($user_id, "traerDireccion");
-
 }
-
+if (isset($_SESSION['cart'])) {
+  $cart_items = $_SESSION['cart'];
+} else {
+  $cart_items = array();
+}
 if (!isset($user_id)) {
   $warning_msg[] = 'Inicie sesion para continuar';
   header('location:user-login.php');
@@ -22,7 +26,7 @@ if (!isset($user_id)) {
 
 $time = time();
 
-// Add item to cart 
+// Add item to cart  
 if (isset($_POST['add_to_cart'])) {
   $product_id = $_POST['product_id'];
   $user_id = $_POST['user_id'];
@@ -67,7 +71,6 @@ if (isset($_POST['update_quantity'])) {
 // Add direccion to database
 if (isset($_POST['make_order'])) {
 
-  $cart_items = $_SESSION['cart'];
   $direccion = $_POST['direccion'];
   $barrio = $_POST['barrio'];
   $localidad = $_POST['localidad'];
@@ -89,13 +92,15 @@ if (isset($_POST['make_order'])) {
     if ($stmt1->rowCount() > 0) {
       $success_msg[] = "Direccion añadida con éxito";
     }
-  } else {
-    $warning_msg[] = "Error al añadir la direccion, ya existe";
   }
 }
 
 // Calculate total price
 $total_price = 0;
+
+
+
+
 
 
 if (isset($_POST['make_order'])) {
@@ -104,7 +109,6 @@ if (isset($_POST['make_order'])) {
     $name = $product['name'];
     $price = $product['price'];
     $quantity = $product['quantity'];
-
     $total_price += $product['price'] * $product['quantity'];
     $datos = array($user_id, date("Y-m-d h:i:sa, $time"), "En preparacion");
     $query = "INSERT INTO orden (ID_usuario, fecha, estado_Orden) VALUES (?,?,?)";
@@ -116,37 +120,20 @@ if (isset($_POST['make_order'])) {
 
     if ($stmt->rowCount() > 0) {
       $order_id = $pdo->lastInsertId();
-      $datos2 = array($order_id, $product_id, $quantity, $price);
-      $query2 = "INSERT INTO detalles_orden ( ID_orden, ID_producto,cantidad,precio_unitario) VALUES (?, ?, ?, ?)";
-      $stmt2 = $pdo->prepare($query2);
-      for ($i = 0; $i < count($datos2); $i++) {
-        $stmt2->bindValue($i + 1, $datos2[$i]);
+      $datos = array($order_id, $product_id, $quantity, $price);
+      $query = "INSERT INTO detalles_orden ( ID_orden, ID_producto,cantidad,precio_unitario) VALUES (?, ?, ?, ?)";
+      $stmt = $pdo->prepare($query);
+      for ($i = 0; $i < count($datos); $i++) {
+        $stmt->bindValue($i + 1, $datos[$i]);
       }
-      $stmt2->execute();
-      if ($stmt2->rowCount() > 0) {
-        $success_msg[] = "Pedido realizado con éxito";
-        // $select_email = $pdo->prepare("SELECT email_Usuario FROM usuario WHERE ID_Usuario = ?");
-        // $select_email->execute([$user_id]);
-        // $fetch_order_detail = $pdo->prepare("SELECT * FROM detalles_orden INNER JOIN orden ON detalles_orden.ID_Orden = orden.ID_Orden INNER JOIN producto ON detalles_orden.ID_producto = producto.ID_producto JOIN usuario ON orden.ID_usuario = usuario.ID_Usuario WHERE usuario.ID_Usuario = ?");
-        // $fetch_order_detail->execute([$user_id]);
-        // $total_ventas = $pdo->prepare("SELECT SUM(precio_unitario * cantidad) AS total_ventas FROM detalles_orden WHERE ID_orden = ?");
-        // $total_ventas->execute([$order_id]);
-        // $total_ventas = $total_ventas->fetch();
-        // $email = $select_email->fetchColumn();
-
-        // Generate the bill as a string
-        // $bill = "Here is your bill:\n\n";
-        // foreach ($fetch_order_detail as $order_detail) {
-        //   $bill .= $order_detail['nombre_Producto'] . " - $" . $order_detail['precio_unitario'] . "\n";
-        // }
-        // $bill .= "\nTotal: $" . $total_ventas['total_ventas'];
-
-
-        $_SESSION['cart'] = array();
-        $total_price = 0;
-      } else {
-        $warning_msg[] = "Error al realizar el pedido";
-      }
+      $stmt->execute();
+    }
+    if ($stmt->rowCount() > 0) {
+      $success_msg[] = "Pedido realizado con éxito";
+      $_SESSION['cart'] = array();
+      $total_price = 0;
+    } else {
+      $warning_msg[] = "Error al realizar el pedido";
     }
   }
 }
@@ -175,10 +162,12 @@ if (isset($_POST['make_order'])) {
 
 <body>
 
-
   <?php
   include '../components/general-header.php';
   ?>
+
+
+
 
   <section class="cart-container-shopping">
     <div class="main-container-cart">
@@ -213,35 +202,63 @@ if (isset($_POST['make_order'])) {
           </div>
 
 
-        <?php
+          <?php
         }
 
         if (!empty($_SESSION['cart'])) {
 
-        ?>
-          <form action='' method='post'>
-            <div class="input-field">
-              <label for="direccion">Direccion</label>
-              <input type="text" name="direccion" maxlength="30" required placeholder="Ingrese su direccion" oninput="this.value.replace(/\s/g,'') " required>
+          if ($datosDir == null) {
+            echo "No hay direcciones registradas, por favor ingrese una direccion para continuar";
+
+          ?>
+
+            <form action='' method='post'>
+              <div class="input-field">
+                <label for="direccion">Direccion</label>
+                <input type="text" name="direccion" maxlength="30" required placeholder="Ingrese su direccion" oninput="this.value.replace(/\s/g,'') " required>
 
 
-            </div>
-            <div class="input-field">
-              <label for="barrio">Barrio</label>
-              <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " required>
+              </div>
+              <div class="input-field">
+                <label for="barrio">Barrio</label>
+                <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'') " required>
 
 
+                <div class="input-field">
+                  <label for="localidad">Localidad</label>
+                  <input type="text" name="localidad" maxlength="30" required placeholder="Ingrese su localidad" oninput="this.value.replace(/\s/g,'') " required>
+                </div>
+                <?php
+                echo "Precio total: $" . number_format($total_price, 2); ?>
+                <input type="hidden" value="<?= serialize($cart_items) ?>">
+                <input type='submit' name='make_order' value='Hacer pedido'>
+            </form>
+
+          <?php
+          } else {
+          ?>
+
+            <form action="" method="post" id="hacer-pedido">
+              <div class="input-field">
+                <label for="direccion">Direccion</label>
+                <input type="text" name="direccion" maxlength="30" required placeholder="Ingrese su direccion" oninput="this.value.replace(/\s/g,'')" value="<?= isset($datosDir['direccion']) ? $datosDir['direccion'] : '' ?>" required>
+              </div>
+              <div class="input-field">
+                <label for="barrio">Barrio</label>
+                <input type="text" name="barrio" maxlength="30" required placeholder="Ingrese su barrio" oninput="this.value.replace(/\s/g,'')" value="<?= $datosDir['barrio']  ?>" required>
+              </div>
               <div class="input-field">
                 <label for="localidad">Localidad</label>
-                <input type="text" name="localidad" maxlength="30" required placeholder="Ingrese su localidad" oninput="this.value.replace(/\s/g,'') " required>
+                <input type="text" name="localidad" maxlength="30" required placeholder="Ingrese su localidad" oninput="this.value.replace(/\s/g,'')" value="<?= $datosDir['localidad'] ?>" required>
               </div>
               <?php
               echo "Precio total: $" . number_format($total_price, 2); ?>
+              <input type="hidden" name="cart_items" value="<?= serialize($cart_items) ?>">
               <input type='submit' name='make_order' value='Hacer pedido'>
-          </form>
+            </form>
 
       <?php
-
+          }
         } elseif (isset($_SESSION['cart']) && empty($_SESSION['cart'])) {
           echo "El carrito está vacío.";
         }

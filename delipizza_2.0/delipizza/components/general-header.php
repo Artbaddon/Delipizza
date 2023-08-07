@@ -2,7 +2,7 @@
     <div class="container-nav">
         <div class="logo-nav">
             <a href="../index.php">
-                <img src="../image/Delipizza-logo-final.jpg" alt="" class="img-responsive" />
+                <img src="../image/Delipizza-logo-final.jpg" alt="" class="img-responsive fixed-img" />
             </a>
         </div>
         <nav class="menu text-left">

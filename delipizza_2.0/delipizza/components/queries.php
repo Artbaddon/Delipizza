@@ -76,7 +76,7 @@ function hacerConsulta($datos, $consulta)
             $total_post = $stmt->rowCount();
             return  $total_post;
 
-        case "consultarDireccion":  
+        case "consultarDireccion":
             $query = "SELECT * FROM direccion WHERE ID_usuario=?";
 
             $stmt = $pdo->prepare($query);
@@ -114,24 +114,15 @@ function hacerConsulta($datos, $consulta)
             return $productosArray;
 
         case "traerDireccion":
+            $direccion=null;
             $query = "SELECT * FROM direccion WHERE ID_usuario=?";
             $stmt = $pdo->prepare($query);
-
             $stmt->execute([$datos]);
 
             if ($stmt->rowCount() > 0) {
-                $direccion = $stmt->fetchAll();
-                $direccionArray = array();
-                foreach ($direccion as $dir) {
-                    $direccionArray[] = array(
-                        'direccion' => $dir['direccion'],
-                        'barrio' => $dir['barrio'],
-                        'localidad' => $dir['localidad']
-
-                    );
-                }
+                $direccion = $stmt->fetch();
             }
-            return $direccionArray;
+            return $direccion;
 
 
         case "traerProductosPrincipales":
@@ -181,26 +172,15 @@ function hacerConsulta($datos, $consulta)
             }
             return $categoriasArray;
 
-        case 'traerUsuarioPerfil':
-            $query = "SELECT * FROM usuario WHERE ID_Usuario=?";
+       
+        case 'traerUsuario':
+            $query = "SELECT * FROM USUARIO WHERE ID_Usuario=?";
             $stmt = $pdo->prepare($query);
             $stmt->execute([$datos]);
             if ($stmt->rowCount() > 0) {
-                $usuario = $stmt->fetchAll();
-                $usuarioArray = array();
-                foreach ($usuario as $user) {
-                    $usuarioArray[] = array(
-                        'ID' => $user['ID_Usuario'],
-                        'Nombre' => $user['nombre_Usuario'],
-                        'Apellido' => $user['apellido_Usuario'],
-                        'Correo' => $user['correo_Usuario'],
-                        'Telefono' => $user['telefono_Usuario'],
-                        'Direccion' => $user['direccion_Usuario'],
-
-                    );
-                }
+                $usuario = $stmt->fetch();
             }
-            return $usuarioArray;
+            return $usuario;
 
         case 'traerAdmin':
             $query = "SELECT * FROM administrador";
@@ -221,5 +201,31 @@ function hacerConsulta($datos, $consulta)
                 }
             }
             return $adminArray;
+
+        case 'traerOrden':
+            $query = "SELECT * FROM detalles_orden INNER JOIN orden ON detalles_orden.ID_Orden= orden.ID_orden INNER JOIN producto ON detalles_orden.ID_producto = producto.ID_producto INNER JOIN usuario ON orden.ID_usuario = usuario.ID_Usuario WHERE orden.ID_usuario=?;";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([$datos]);
+            if ($stmt->rowCount() > 0) {
+                $ordenes = $stmt->fetchAll();
+                $ordenesArray = array();
+                foreach ($ordenes as $orden) {
+                    $ordenesArray[] = array(
+                        'id' => $orden['ID_orden'],
+                        'fecha' => $orden['fecha'],
+                        'ID_Producto' => $orden['ID_producto'],
+                        'cantidad' => $orden['cantidad'],
+                        'precio' => $orden['precio_unitario'],
+                        'nombre_producto' => $orden['nombre_Producto'],
+                        'img_producto' => $orden['img_Producto'],
+                        'nombre_usuario' => $orden['nombre_Usuario'],
+                        'correo_usuario' => $orden['email_Usuario'],
+                        'descripcion_producto' => $orden['descripcion_Producto'],
+                        'estado_producto' => $orden['estado'],
+                        'categoria_producto' => $orden['CategoriaID']
+                    );
+                }
+            }
+            return $ordenesArray;
     }
 }

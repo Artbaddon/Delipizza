@@ -262,6 +262,7 @@ h3 {
   z-index: 1001;
   position: fixed;
 }
+
 .menu {
   width: 100%;
   position: fixed;
@@ -845,19 +846,18 @@ form span {
 }
 /* CSS for CART */
 
+
 .cart-container-shopping {
-  height: 95vh;
+  height: fit-content;
   display: flex;
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  right: 50%;
   align-items: center;
   justify-content: center;
+ 
 }
 .main-container-cart {
   max-width: 800px;
   margin: 0 auto;
+  margin-top: 10%;
 }
 
 .main-container-cart h1 {
