@@ -1,4 +1,6 @@
 <?php
+
+
 if (isset($_POST['submit'])) {
     //Actualizar nombre
     $name = $_POST['name'];
@@ -96,15 +98,20 @@ if (isset($_POST['submit'])) {
 // Insertar Direccion:
 
 if (isset($_POST['localidad']) and isset($_POST['address']) and isset($_POST['barrio'])) {
-
+    $address = $_POST['address'];
+    $address = htmlspecialchars($address);
+    $barrio = $_POST['barrio'];
+    $barrio = htmlspecialchars($barrio);
+    $localidad = $_POST['localidad'];
+    $localidad = htmlspecialchars($localidad);
     if ($info_direc > 0) {
         $old_address = $datosDir['direccion'];
         $old_barrio = $datosDir['barrio'];
         $old_localidad = $datosDir['localidad'];
         // Actualizar Direccion
-        if ($old_address != $old_address) {
+        if (isset($_POST['address']) and $address != $old_address) {
             $update_dir = $pdo->prepare("UPDATE direccion SET direccion = ? WHERE ID_usuario = ?");
-            $update_dir->execute([$old_address, $user_id]);
+            $update_dir->execute([$address, $user_id]);
             if ($update_dir->rowCount() > 0) {
                 $success_msg[] = 'Direccion actualizada';
             } else {
@@ -112,9 +119,9 @@ if (isset($_POST['localidad']) and isset($_POST['address']) and isset($_POST['ba
             }
         }
         // Actualizar Barrio
-        if ($old_barrio != $old_barrio) {
+        if (isset($_POST['barrio']) and $barrio != $old_barrio) {
             $update_dir = $pdo->prepare("UPDATE direccion SET barrio = ? WHERE ID_usuario = ?");
-            $update_dir->execute([$old_barrio, $user_id]);
+            $update_dir->execute([$barrio, $user_id]);
             if ($update_dir->rowCount() > 0) {
                 $success_msg[] = 'Barrio actualizado';
             } else {
@@ -122,7 +129,7 @@ if (isset($_POST['localidad']) and isset($_POST['address']) and isset($_POST['ba
             }
         }
         // Actualizar Localidad
-        if ($old_localidad != $old_localidad) {
+        if ($localidad != $old_localidad) {
             $update_dir = $pdo->prepare("UPDATE direccion SET localidad = ? WHERE ID_usuario = ?");
             $update_dir->execute([$old_localidad, $user_id]);
             if ($update_dir->rowCount() > 0) {
@@ -131,19 +138,11 @@ if (isset($_POST['localidad']) and isset($_POST['address']) and isset($_POST['ba
                 $warning_msg[] = 'fallo al actualizar localidad';
             }
         }
-    } else {
-        $warning_msg[] = 'La direccion ya existe, ingrese otra';
     }
 
-    $address = $_POST['address'];
-    $address = htmlspecialchars($address);
-    $barrio = $_POST['barrio'];
-    $barrio = htmlspecialchars($barrio);
-    $localidad = $_POST['localidad'];
-    $localidad = htmlspecialchars($localidad);
 
 
-    if (!empty($address)  or !empty($barrio)  or !empty($localidad) and $localidad != $datosDir['localidad'] and $barrio != $datosDir['barrio'] and $address != $datosDir['direccion']) {
+    if (empty($address)   or empty($barrio)  or empty($localidad)) {
         if ($info_direc == 0) {
             $insert_dir = $pdo->prepare("INSERT INTO direccion(ID_usuario,direccion,barrio,localidad) VALUES(?,?,?,?) ");
             $insert_dir->execute([$user_id, $address, $barrio, $localidad]);

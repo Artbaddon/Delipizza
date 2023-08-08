@@ -25,41 +25,59 @@ if (isset($_POST['save'])) {
     $state = $_POST['status'];
     $state = htmlspecialchars($state);
 
-
     $update_product = $pdo->prepare("UPDATE producto SET nombre_Producto = ?, precio_Producto = ?, descripcion_Producto = ?, CategoriaID = ?, estado = ?  WHERE ID_Producto = ?");
     $update_product->execute([$title, $price, $description, $category, $state, $_POST['product_id']]);
     $success_msg[] = 'Producto actualizado';
+    
+    //Update image
 
-    $old_image = $_POST['old_img'];
-    $image = $_FILES['image']['name'];
-    $image_size = $_FILES['image']['size'];
-    $image_tmp_name = $_FILES['image']['tmp_name'];
-    $image_folder = '../uploaded-img/productos/' . $image;
-    $select_image = $pdo->prepare("SELECT img_Producto FROM producto WHERE ID_Producto = ?");
-    $select_image->execute([$_POST['product_id']]);
+    if (isset($_POST['old_img']) and $_FILES['image']['name'] != '') {
 
-    if (!empty($image)) {
+        $old_image = $_POST['old_img'];
+        $image = $_FILES['image']['name'];
+        $image = htmlspecialchars($image);
+        $image_tmp_name = $_FILES['image']['tmp_name'];
+        $image_folder = '../uploaded-img/productos/' . $image;
+        $image_size = $_FILES['image']['size'];
+
+
+
         if ($image_size > 10000000) {
             $warning_msg[] = 'La imagen es muy grande';
         } else {
             $update_image = $pdo->prepare("UPDATE producto SET img_Producto = ? WHERE ID_Producto = ?");
             $update_image->execute([$image, $product_id]);
+            if ($update_image->rowCount() > 0) {
+                $success_msg[] = 'Imagen actualizada';
+            } else {
+                $warning_msg[] = 'Error al actualizar la imagen';
+            }
+
+
             move_uploaded_file($image_tmp_name, $image_folder);
-            if ($old_image != $image and $old_image != '') {
+            if ($old_image != $image && $old_image != '') {
                 unlink('../uploaded-img/productos/' . $old_image);
             }
             $success_msg[] = 'Imagen actualizada';
         }
     }
-    //Delete product
-    if (isset($_POST['delete_product'])) {
-        $delete_product = $pdo->prepare("UPDATE producto SET estado='inactivo' WHERE ID_Producto = ?");
-        $delete_product->execute([$_POST['product_id']]);
-        unlink('../uploaded-img/productos/' . $old_image);
-        header('location:admin-dashboard.php');
-        $success_msg[] = 'Producto eliminado';
-    }
 }
+
+
+
+
+
+
+
+//Delete product
+if (isset($_POST['delete_product'])) {
+    $delete_product = $pdo->prepare("UPDATE producto SET estado=? WHERE ID_Producto = ?");
+    $delete_product->execute(['inactivo', $_POST['product_id']]);
+    unlink('../uploaded-img/productos/' . $old_image);
+    header('location:admin-dashboard.php');
+    $success_msg[] = 'Producto eliminado';
+}
+
 
 
 ?>
@@ -134,7 +152,7 @@ if (isset($_POST['save'])) {
                                         $get_category = $pdo->prepare("SELECT * FROM categoria");
                                         $get_category->execute();
                                         if ($get_category->rowCount() > 0) {
-                                            while ($fetch_category = $get_category->fetch(PDO::FETCH_ASSOC)) {
+                                            while ($fetch_category = $get_category->fetch()) {
                                         ?>
                                                 <option value="<?= $fetch_category['ID_Categoria']; ?>">
                                                     <?= $fetch_category['nombre_Categoria']; ?>
@@ -146,11 +164,11 @@ if (isset($_POST['save'])) {
                                 </div>
                                 <div class="input-field">
                                     <label for="image">Imagen del Producto <sup>*</sup></label>
-                                    <input type="file" name="image" id="image" required>
+                                    <input type="file" name="image" id="image">
                                     <?php if ($fetch_product['img_Producto'] != '') { ?>
                                         <img src="../uploaded-img/productos/<?= $fetch_product['img_Producto']; ?>" alt="" class="image">
                                         <div class="flex-btn">
-                                            <input type="submit" name="delete_image" class="btn" value="borrar imagen">
+
                                             <a href="view-products.php" class="btn" style="width:49%; text-align:center; height: 3rem;margin-top:.7rem;">volver</a>
                                         </div>
                                     <?php } ?>
@@ -177,7 +195,7 @@ if (isset($_POST['save'])) {
         </section>
     </div>
 
-   
+
     <script src="../js/script.js"></script>
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

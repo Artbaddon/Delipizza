@@ -47,6 +47,13 @@ body:not(.index, .profile, .logo-img) {
   padding: 0.5rem;
   margin-top: 2rem;
   border: 2px solid var(--orange);
+  width: 200px;
+}
+.profile p{
+  margin: 1%;
+  padding: 1px;
+  text-align: center;
+
 }
 
 input:not(.search-btn, .quantity),
