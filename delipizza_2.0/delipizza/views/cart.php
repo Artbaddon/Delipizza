@@ -8,7 +8,6 @@ session_start();
 if (isset($_SESSION)) {
   $user_id = $_SESSION['user_id'];
 
-
   $datosDir = hacerConsulta($user_id, "traerDireccion");
 }
 if (isset($_SESSION['cart'])) {
@@ -95,13 +94,9 @@ if (isset($_POST['make_order'])) {
   }
 }
 
+
 // Calculate total price
 $total_price = 0;
-
-
-
-
-
 
 if (isset($_POST['make_order'])) {
 
@@ -131,6 +126,7 @@ if (isset($_POST['make_order'])) {
     if ($stmt->rowCount() > 0) {
       $success_msg[] = "Pedido realizado con éxito";
       $_SESSION['cart'] = array();
+
       $total_price = 0;
     } else {
       $warning_msg[] = "Error al realizar el pedido";

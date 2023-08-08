@@ -6,6 +6,9 @@ include 'connect.php';
 include 'queries.php';
 
 
+
+$order_id = rand(1000, 20000);
+
 // Generate the HTML code for the bill
 $html = "
 <!DOCTYPE html>
@@ -58,14 +61,14 @@ foreach ($products as $product) {
       <tr>
         <td>$name</td>
         <td>$quantity</td>
-        <td>\$$price</td>
-        <td>\$$total_price</td>
+        <td>$$price</td>
+        <td>$$total_price</td>
       </tr>";
 }
 $html .= "
       <tr>
         <td colspan='3' class='total'>Total</td>
-        <td>\$$total</td>
+        <td>\$total</td>
       </tr>
     </tbody>
   </table>
@@ -76,5 +79,4 @@ $html .= "
 
 $mpdf = new \Mpdf\Mpdf();
 $mpdf->WriteHTML($html);
-$mpdf->output("factura_$order_id.pdf","D");
-?>
+$mpdf->output("factura_$order_id.pdf", "D");

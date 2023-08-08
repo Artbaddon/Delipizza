@@ -30,6 +30,7 @@ function hacerConsulta($datos, $consulta)
                 echo "<script>alert('Categoria Agregada exitosamente')</script>";
             }
             break;
+
         case "insertarProducto":
 
             $query = "SELECT * FROM producto WHERE nombre_Producto=? AND precio_Producto=? AND descripcion_Producto=? AND CategoriaID=? AND estado=? AND img_Producto=?";
@@ -62,10 +63,11 @@ function hacerConsulta($datos, $consulta)
             $stmt = $pdo->prepare($query);
 
             $stmt->execute([$datos]);
+
             $total_active_post = $stmt->rowCount();
 
-
             return  $total_active_post;
+
 
         case "consultarProductos":
             $query = "SELECT * FROM producto";
@@ -74,6 +76,7 @@ function hacerConsulta($datos, $consulta)
 
             $stmt->execute();
             $total_post = $stmt->rowCount();
+
             return  $total_post;
 
         case "consultarDireccion":
@@ -83,7 +86,15 @@ function hacerConsulta($datos, $consulta)
 
             $stmt->execute([$datos]);
             $total_dir = $stmt->rowCount();
+
             return  $total_dir;
+            
+        case "consultarUsuarios":
+            $query = "SELECT * FROM usuario";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+            $total_user = $stmt->rowCount();
+            return $total_user;
 
         case "consultarCategorias":
             $query = "SELECT * FROM Categoria";
@@ -92,6 +103,7 @@ function hacerConsulta($datos, $consulta)
             $total_post = $stmt->rowCount();
 
             return  $total_post;
+
         case 'traerProductosRecomendados':
             $query = "SELECT * FROM producto WHERE CategoriaID=? AND estado=? LIMIT 4";
             $stmt = $pdo->prepare($query);
@@ -114,7 +126,7 @@ function hacerConsulta($datos, $consulta)
             return $productosArray;
 
         case "traerDireccion":
-            $direccion=null;
+            $direccion = null;
             $query = "SELECT * FROM direccion WHERE ID_usuario=?";
             $stmt = $pdo->prepare($query);
             $stmt->execute([$datos]);
@@ -149,8 +161,6 @@ function hacerConsulta($datos, $consulta)
             return $productosArray;
 
 
-
-
         case "traerCategorias";
 
             $query = "SELECT * FROM categoria WHERE ID_Categoria>?";
@@ -172,7 +182,7 @@ function hacerConsulta($datos, $consulta)
             }
             return $categoriasArray;
 
-       
+
         case 'traerUsuario':
             $query = "SELECT * FROM USUARIO WHERE ID_Usuario=?";
             $stmt = $pdo->prepare($query);

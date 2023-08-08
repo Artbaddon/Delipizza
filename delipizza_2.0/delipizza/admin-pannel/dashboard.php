@@ -9,11 +9,12 @@ if (!isset($admin_id)) {
     $warning_msg[] = 'Inicie sesión para continuar';
     header('location:admin-login.php');
 }
+
+// Se hace uso de la funcion hacer consulta para traer los registros de la Base de Datos
 $total_active_post = hacerConsulta('activo', "consultarEstadoProductos");
 $total_deactive_post = hacerConsulta('inactivo', "consultarEstadoProductos");
 $total_post = hacerConsulta('0', 'consultarProductos');
 $total_category = hacerConsulta('0', 'consultarCategorias');
-
 
 
 ?>
@@ -83,9 +84,8 @@ $total_category = hacerConsulta('0', 'consultarCategorias');
 
                 <div class="box">
                     <?php
-                    $select_users = $pdo->prepare("SELECT * FROM usuario");
-                    $select_users->execute();
-                    $total_users = $select_users->rowCount();
+                    $total_users = hacerConsulta('', 'consultarUsuarios');
+
 
                     ?>
                     <h3><?= $total_users ?></h3>
