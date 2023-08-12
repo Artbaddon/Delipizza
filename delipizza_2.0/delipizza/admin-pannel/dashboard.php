@@ -47,7 +47,7 @@ $total_category = hacerConsulta('0', 'consultarCategorias');
                     <p><?= $fetch_profile['nombre_Admin']; ?></p>
 
 
-                    <a href="update-profile.php" class="btn">Actualizar Perfil</a>
+                    <a href="update-profile.php" class="btn">ver Perfil</a>
                 </div>
                 <div class="box">
 
