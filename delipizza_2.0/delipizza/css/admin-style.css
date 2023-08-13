@@ -386,14 +386,16 @@ header .right {
 .table-container {
   display: flex;
   flex-direction: column;
-  overflow-x: auto;
+  overflow-y: auto;
   width: 65%;
+  height: 80vh;
   margin-top: 4rem;
   box-shadow: var(--inner-box-shadow);
 }
 
 .table {
   width: 100%;
+
   border-collapse: collapse;
 }
 

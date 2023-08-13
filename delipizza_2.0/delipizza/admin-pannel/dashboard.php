@@ -45,35 +45,29 @@ $total_category = hacerConsulta('0', 'consultarCategorias');
                 <div class="box">
                     <h3>¡ Bienvenido !</h3>
                     <p><?= $fetch_profile['nombre_Admin']; ?></p>
-
-
                     <a href="update-profile.php" class="btn">ver Perfil</a>
                 </div>
+
                 <div class="box">
-
-
                     <h3><?= $total_post; ?></h3>
                     <p>productos añadidos</p>
                     <a href="add-products.php" class="btn">Añadir nuevos productos</a>
 
-
                 </div>
-                <div class="box">
 
+                <div class="box">
                     <h3><?= $total_active_post; ?></h3>
                     <p>Total productos activos</p>
                     <a href="view-products.php" class="btn">Ver productos</a>
 
-
                 </div>
-                <div class="box">
-                    <?php
 
-                    ?>
+                <div class="box">
                     <h3><?= $total_deactive_post ?></h3>
                     <p>Post Inactivos</p>
                     <a href="view-deactivate-products.php" class="btn">Ver productos</a>
                 </div>
+
                 <div class="box">
                     <h3><?= $total_category ?></h3>
                     <p>Categorias</p>
@@ -85,8 +79,6 @@ $total_category = hacerConsulta('0', 'consultarCategorias');
                 <div class="box">
                     <?php
                     $total_users = hacerConsulta('', 'consultarUsuarios');
-
-
                     ?>
                     <h3><?= $total_users ?></h3>
                     <p>Cuentas de Usuario</p>
@@ -98,11 +90,10 @@ $total_category = hacerConsulta('0', 'consultarCategorias');
                     $select_admin = $pdo->prepare("SELECT * FROM administrador");
                     $select_admin->execute();
                     $total_admin = $select_admin->rowCount();
-
                     ?>
                     <h3><?= $total_admin; ?></h3>
                     <p>Numero de administradores</p>
-                    <a href="#" class="btn">Ver admins</a>
+                    <a href="view-admin.php" class="btn">Ver admins</a>
                 </div>
 
                 <div class="box">
@@ -114,6 +105,7 @@ $total_category = hacerConsulta('0', 'consultarCategorias');
                     ?>
                     <h3><?= $total_orden['COUNT(ID_Orden)']; ?></h3>
                     <p>Numero de Ordenes</p>
+                    <a href="view-orders.php" class="btn">Ver Ordenes</a>
 
                 </div>
                 <div class="box">
