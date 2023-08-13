@@ -82,13 +82,13 @@ if (isset($_POST['make_order'])) {
   }
   $stmt->execute();
   if ($stmt->rowCount() == 0) {
-    $query1 = "INSERT INTO direccion (ID_usuario,direccion, barrio, localidad) VALUES (?,?,?,?)";
-    $stmt1 = $pdo->prepare($query1);
+    $query = "INSERT INTO direccion (ID_usuario,direccion, barrio, localidad) VALUES (?,?,?,?)";
+    $stmt = $pdo->prepare($query1);
     for ($i = 0; $i < count($datos); $i++) {
-      $stmt1->bindValue($i + 1, $datos[$i]);
+      $stmt->bindValue($i + 1, $datos[$i]);
     }
-    $stmt1->execute();
-    if ($stmt1->rowCount() > 0) {
+    $stmt->execute();
+    if ($stmt->rowCount() > 0) {
       $success_msg[] = "Direccion añadida con éxito";
     }
   }
@@ -106,7 +106,7 @@ if (isset($_POST['make_order'])) {
     $quantity = $product['quantity'];
     $total_price += $product['price'] * $product['quantity'];
     $datos = array($user_id, date("Y-m-d h:i:sa, $time"), "En preparacion");
-    $query = "INSERT INTO orden (ID_usuario, fecha, estado_Orden) VALUES (?,?,?)";
+    $query = "INSERT INTO orden (ID_pedido_usuario, fecha, estado_Orden) VALUES (?,?,?)";
     $stmt = $pdo->prepare($query);
     for ($i = 0; $i < count($datos); $i++) {
       $stmt->bindValue($i + 1, $datos[$i]);
@@ -125,7 +125,14 @@ if (isset($_POST['make_order'])) {
     }
     if ($stmt->rowCount() > 0) {
       $success_msg[] = "Pedido realizado con éxito";
-      $_SESSION['cart'] = array();
+      $comprobante = 1;
+     
+      if ($comprobante = 1) {
+        include '../components/factura.php';
+        $comprobante = 0;
+        $_SESSION['cart'] = array();
+      }
+
 
       $total_price = 0;
     } else {
