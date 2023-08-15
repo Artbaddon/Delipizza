@@ -127,17 +127,23 @@ if (isset($_POST['localidad']) and isset($_POST['address']) and isset($_POST['ba
             } else {
                 $warning_msg[] = 'fallo al actualizar barrio';
             }
-        }
+        } 
+        // elseif (isset($_POST['barrio']) and $barrio == $old_barrio) {
+        //     $warning_msg[] = 'Barrio repetido, inserte otro';
+        // }
         // Actualizar Localidad
-        if ($localidad != $old_localidad) {
+        if (isset($_POST['localidad']) and $localidad != $old_localidad) {
             $update_dir = $pdo->prepare("UPDATE direccion SET localidad = ? WHERE ID_usuario = ?");
-            $update_dir->execute([$old_localidad, $user_id]);
+            $update_dir->execute([$localidad, $user_id]);
             if ($update_dir->rowCount() > 0) {
                 $success_msg[] = 'Localidad actualizada';
             } else {
                 $warning_msg[] = 'fallo al actualizar localidad';
             }
         }
+        // elseif (isset($_POST['localidad']) and $localidad == $old_localidad) {
+        //     $warning_msg[] = 'Localidad repetida, inserte otra';
+        // }
     }
 
 

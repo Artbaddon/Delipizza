@@ -60,7 +60,7 @@ if (isset($_POST['submit'])) {
                     <label for="password">Contraseña<sup>*</sup></label>
                     <input type="password" name="pass" maxlength="20" required placeholder="Ingrese su Contraseña" oninput="this.value.replace(/\s/g,'')">
 
-                    <input type="submit" name="submit" class="submit" value="Logueese Ahora" class="btn">
+                    <input type="submit" name="submit" class="submit" value="Iniciar Sesion" class="btn">
                     <p>¿No tienes cuenta? Registrate <a href="user-register.php">acá</a></p>
                 </div>
 

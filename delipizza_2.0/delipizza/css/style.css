@@ -496,6 +496,7 @@ h3 {
   flex-direction: column;
   overflow-x: auto;
   width: 65%;
+  height: 80vh;
   margin-top: 4rem;
   box-shadow: var(--inner-box-shadow);
 }

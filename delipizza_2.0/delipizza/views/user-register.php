@@ -51,6 +51,7 @@ if (isset($_POST['submit'])) {
             $insert_user->execute([$name, $email, $phone, $cpass, $payment_method, $image]);
             move_uploaded_file($image_tmp_name, $image_folder);
             $success_msg[] = 'Registro de Usuario exitoso';
+            header('location:user-login.php');
         }
     }
 }
@@ -94,7 +95,7 @@ if (isset($_POST['submit'])) {
                             <label for="phone"> Telefono <sup>*</sup></label>
                             <input type="tel" name="phone" maxlength="10" required placeholder="XXX-XXX-XXXX" oninput="this.value.replace(/\s/g,'')" minlength="10">
                         </div>
-                        
+
                         <div class="input-field">
                             <label for="payment-method">
                                 <select name="payment_method" id="payment_method">Metodo de pago </label>
