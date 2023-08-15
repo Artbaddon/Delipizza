@@ -85,14 +85,14 @@ if (!isset($user_id)) {
                     </thead>
                     <tbody>
                         <?php
-                        $select_orders = $pdo->prepare("SELECT * FROM orden WHERE ID_Usuario  = ? ");
+                        $select_orders = $pdo->prepare("SELECT * FROM orden WHERE ID_pedido_usuario  = ? ");
                         $select_orders->execute([$user_id]);
 
 
                         if ($select_orders->rowCount() > 0) {
 
 
-                            $select_order_detail = $pdo->prepare("SELECT * FROM detalles_orden INNER JOIN orden ON detalles_orden.ID_Orden = orden.ID_Orden INNER JOIN producto ON detalles_orden.ID_producto = producto.ID_producto JOIN usuario ON orden.ID_usuario = usuario.ID_Usuario WHERE usuario.ID_Usuario = ?");
+                            $select_order_detail = $pdo->prepare("SELECT * FROM detalles_orden INNER JOIN orden ON detalles_orden.ID_Orden = orden.ID_Orden INNER JOIN producto ON detalles_orden.ID_producto = producto.ID_producto JOIN usuario ON orden.ID_pedido_usuario = usuario.ID_Usuario WHERE usuario.ID_Usuario = ?");
                             $select_order_detail->execute([$user_id]);
                             $fetch_order_detail = $select_order_detail->fetchAll();
                             foreach ($fetch_order_detail as $order_detail) {
