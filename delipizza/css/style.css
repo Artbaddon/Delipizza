@@ -49,11 +49,10 @@ body:not(.index, .profile, .logo-img) {
   border: 2px solid var(--orange);
   width: 200px;
 }
-.profile p{
+.profile p {
   margin: 1%;
   padding: 1px;
   text-align: center;
-
 }
 
 input:not(.search-btn, .quantity),
@@ -291,14 +290,22 @@ h3 {
   font-size: 2rem;
   color: var(--orange);
 }
+
 .menu ul li a:hover {
   color: var(--black);
 }
+.icon a p.text-header {
+  font-size: 1rem;
+
+  display: inline;
+}
+
 
 .icon {
   width: 10px;
   height: 10px;
   display: inline;
+  margin-top: 10%;
 }
 
 #user-btn,
@@ -313,9 +320,11 @@ h3 {
 }
 
 #user-btn:hover,
-.cart-btn:hover {
+.cart-btn:hover,
+.icon:hover {
   box-shadow: var(--outer-shadow);
   border-radius: 50%;
+
 }
 .cart-btn {
   margin-left: 0.1rem;
@@ -484,6 +493,7 @@ h3 {
 .social-links i:hover {
   border-radius: 50%;
 }
+
 /* CSS FOR PROFILE PAGE */
 .container-profile-data,
 .table-container {
@@ -639,6 +649,7 @@ h3 {
   transition: all ease 1s;
   cursor: pointer;
 }
+
 /* CSS FOR MENU */
 .img-product {
   width: 100%;
@@ -739,6 +750,7 @@ h3 {
 .product-desc {
   text-align: center;
 }
+
 /* CSS for food catalog */
 .food-catalog {
   background-color: var(--background-color);
@@ -854,13 +866,11 @@ form span {
 }
 /* CSS for CART */
 
-
 .cart-container-shopping {
   height: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
- 
 }
 .main-container-cart {
   max-width: 800px;

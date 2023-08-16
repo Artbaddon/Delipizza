@@ -66,7 +66,7 @@ include '../components/profile-controller.php';
                             <li><a href="orders.php"><i class="bx bxs-home-smile"></i>Historial Pedidos</a></li>
 
 
-                            <li><a href="../components/admin-logout.php" onclick="return confirm('¿Salir del sitio?')"><i class="bx bx-log-out"></i> Salir</a></li>
+                            <li><a href="../components/user-logout.php" onclick="return confirm('¿Salir del sitio?')"><i class="bx bx-log-out"></i> Salir</a></li>
                         </ul>
                     </div>
 

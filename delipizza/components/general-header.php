@@ -14,27 +14,36 @@
                 <li>
                     <a href="menu.php">Menu</a>
                 </li>
-             
+
                 <li>
                     <div class="icon" id="user-btn">
+
                         <img src="../image/user-solid-24.png" alt="">
+
+
+
+
                     </div>
+
                 </li>
                 <li>
                     <div class=" icon">
                         <a href="../views/cart.php">
-                        <img src="../image/bxs-cart-alt.png" alt="">
+                            <img src="../image/bxs-cart-alt.png" alt="" class="icon-navbar">
+
                         </a>
-                       
                     </div>
+
                 </li>
                 <li>
-                    <div class=" icon">
-                        <a href="user-logout.php">
-                        <img src="../image/bxs-exit.png" alt="">
+                    <div class="icon">
+                        <a href="user-logout.php" onclick="return confirm('¿Desea salir del sitio?' )">
+                            <img src="../image/bxs-exit.png" alt="">
+
                         </a>
-                       
                     </div>
+
+
                 </li>
             </ul>
         </nav>

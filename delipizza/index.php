@@ -25,6 +25,7 @@ $consultarUsuario = hacerConsulta("2", "consultarUsuario");
   ?>
 </style>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -57,9 +58,6 @@ $consultarUsuario = hacerConsulta("2", "consultarUsuario");
             <a href="views/menu.php">Menu</a>
           </li>
           <li>
-            <a href="views/profile.php">Perfil</a>
-          </li>
-          <li>
             <div class="icon" id="user-btn">
               <img src="image/user-solid-24.png" alt="">
             </div>
@@ -67,7 +65,16 @@ $consultarUsuario = hacerConsulta("2", "consultarUsuario");
           <li>
             <div class=" icon">
               <a href="views/cart.php">
-                <img src="image/bxs-shopping-bags.png" alt="">
+                <img src="image/bxs-cart-alt.png" alt="">
+              </a>
+
+            </div>
+          </li>
+          <li>
+            <div class="icon">
+              <a href="components/user-logout.php" onclick="return confirm('¿Desea salir del sitio?' )">
+                <img src="image/bxs-exit.png" alt="">
+
               </a>
 
             </div>
@@ -89,7 +96,7 @@ $consultarUsuario = hacerConsulta("2", "consultarUsuario");
           <div class="flex-btn">
             <a href="views/profile.php
                     " class="btn-profile">Ver Perfil</a>
-            <a href="components/user-logout.php" class="btn-profile" onclick="return confirm('Logout from the website' )">Logout</a>
+            <a href="components/user-logout.php" class="btn-profile" onclick="return confirm('Logout from the website' )">Salir</a>
           </div>
         <?php } ?>
       </div>
