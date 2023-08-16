@@ -89,7 +89,7 @@ if (isset($_POST['submit'])) {
                         </div>
                         <div class="input-field">
                             <label for="email"> Email <sup>*</sup></label>
-                            <input type="email" name="email" maxlength="25" required placeholder="Ingrese su email" oninput="this.value.replace(/\s/g,'')">
+                            <input type="email" name="email" maxlength="60" required placeholder="Ingrese su email" oninput="this.value.replace(/\s/g,'')">
                         </div>
                         <div class="input-field">
                             <label for="phone"> Telefono <sup>*</sup></label>
