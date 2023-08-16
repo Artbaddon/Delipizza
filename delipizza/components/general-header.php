@@ -14,9 +14,7 @@
                 <li>
                     <a href="menu.php">Menu</a>
                 </li>
-                <li>
-                    <a href="profile.php">Perfil</a>
-                </li>
+             
                 <li>
                     <div class="icon" id="user-btn">
                         <img src="../image/user-solid-24.png" alt="">
@@ -25,7 +23,15 @@
                 <li>
                     <div class=" icon">
                         <a href="../views/cart.php">
-                        <img src="../image/bxs-shopping-bags.png" alt="">
+                        <img src="../image/bxs-cart-alt.png" alt="">
+                        </a>
+                       
+                    </div>
+                </li>
+                <li>
+                    <div class=" icon">
+                        <a href="user-logout.php">
+                        <img src="../image/bxs-exit.png" alt="">
                         </a>
                        
                     </div>
