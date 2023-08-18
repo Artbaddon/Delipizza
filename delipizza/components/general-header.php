@@ -62,7 +62,7 @@
                 <div class="flex-btn">
                     <a href="../views/profile.php
                     " class="btn-profile">Ver Perfil</a>
-                    <a href="../components/user-logout.php" class="btn-profile" onclick="return confirm('Logout from the website' )">Logout</a>
+                    <a href="../components/user-logout.php" class="btn-profile" onclick="return confirm('¿Desea salir del sitio?' )">Logout</a>
                 </div>
             <?php } ?>
         </div>

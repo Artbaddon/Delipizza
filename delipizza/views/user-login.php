@@ -15,11 +15,11 @@ if (isset($_POST['submit'])) {
     $pass = htmlspecialchars($pass);
 
 
-    $select_admin = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ? AND contraseña_Usuario = ?");
-    $select_admin->execute([$email, $pass]);
-    if ($select_admin->rowCount() > 0) {
-        $fetch_admin_id = $select_admin->fetch(PDO::FETCH_ASSOC);
-        $_SESSION['user_id'] = $fetch_admin_id['ID_Usuario'];
+    $select_user = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ? AND contraseña_Usuario = ?");
+    $select_user->execute([$email, $pass]);
+    if ($select_user->rowCount() > 0) {
+        $fetch_user_id = $select_user->fetch();
+        $_SESSION['user_id'] = $fetch_user_id['ID_Usuario'];
         header('location:../index.php');   
     } else {
         $warning_msg[] = 'El email   o la contraseña son incorrectos';
@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
 
     <div class="main-container">
 
-        <section class="form-container" id="admin_login">
+        <section class="form-container" id="user_login">
             <form action="" method="post" enctype="multipart/form-data">
 
                 <h3>Bienvenido!</h3>
