@@ -54,14 +54,15 @@ if (isset($_POST['delete'])) {
                     while ($fetch_user = $select_user->fetch(PDO::FETCH_ASSOC)) {
 
                 ?>
+
                         <form action="" method="post" class="box">
                             <input type="hidden" name="user_id" value="<?= $fetch_user['ID_Usuario']; ?>">
                             <div class="id_user"><?= $fetch_user['ID_Usuario']; ?></div>
-                            <div class="name_user"><?= $fetch_user['nombre_Usuario']; ?></div>
+                            <div class="name_user price" ><?= $fetch_user['nombre_Usuario']; ?></div>
                             <?php if ($fetch_user['foto'] != '') { ?>
                                 <img src="../uploaded-img/clientes/<?= $fetch_user['foto']; ?>" alt="" class="image">
                             <?php  } ?>
-                            <div class=""><?= $fetch_user['nombre_Usuario']; ?></div>
+                            <div class="title"><?= $fetch_user['nombre_Usuario']; ?></div>
                             <div class="flex-btn">
                                 <a href="edit-user.php?id=<?= $fetch_user['ID_Usuario']; ?>" class="btn">Editar</a>
                                 <button type="submit" name="delete" class="btn" onclick="return confirm('Desea borrar este usuario?');">Borrar</button>
