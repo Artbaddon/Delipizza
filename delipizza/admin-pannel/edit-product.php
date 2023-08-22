@@ -2,33 +2,93 @@
 
 include '../components/connect.php';
 include '../components/queries.php';
+
+
 session_start();
 
 $admin_id = $_SESSION['admin_id'];
 if (!isset($admin_id)) {
     header('location:admin-login.php');
 }
+$product_id = "";
 $product_id = $_GET['id'];
+
 if (isset($_POST['save'])) {
+    $old_product = hacerConsulta($product_id, "traerProductosID");
+
+    $old_title = $old_product['nombre_Producto'];
     $title = $_POST['title'];
     $title = htmlspecialchars($title);
 
+    $old_price = $old_product['precio_Producto'];
     $price = $_POST['price'];
     $price = htmlspecialchars($price);
 
+    $old_desc = $old_product['descripcion_Producto'];
     $description = $_POST['description'];
     $description = htmlspecialchars($description);
 
+    $old_category = $old_product['CategoriaID'];
     $category = $_POST['category'];
     $category = htmlspecialchars($category);
 
+    $old_state = $old_product['estado'];
     $state = $_POST['status'];
     $state = htmlspecialchars($state);
 
-    $update_product = $pdo->prepare("UPDATE producto SET nombre_Producto = ?, precio_Producto = ?, descripcion_Producto = ?, CategoriaID = ?, estado = ?  WHERE ID_Producto = ?");
-    $update_product->execute([$title, $price, $description, $category, $state, $_POST['product_id']]);
-    $success_msg[] = 'Producto actualizado';
-    
+    if (isset($title)) {
+        if ($title != $old_title and $title != '') {
+            $update_name = $pdo->prepare("UPDATE producto SET nombre_producto=? WHERE ID_producto =?");
+            $update_name->execute([$title, $product_id]);
+            if ($update_name->rowCount() > 0) {
+                $success_msg[] = 'Nombre Actualizado correctamente';
+            } else {
+                $success_msg[] = 'Error al actualizar nombre';
+            }
+        }
+    } else {
+        $warning_msg[] = 'Error al actualizar, nombre repetido';
+    }
+    if (isset($price)) {
+        if ($price != $old_price and $price != '') {
+            $update_price = $pdo->prepare("UPDATE producto SET precio_Producto=? WHERE ID_producto =?");
+            $update_price->execute([$price, $product_id]);
+            if ($update_price->rowCount() > 0) {
+                $success_msg[] = 'Precio actualizado correctamente';
+            } else {
+                $success_msg[] = 'Error al actualizar precio';
+            }
+        } else {
+            $warning_msg[] = 'Error al actualizar, precio igual al anterior';
+        }
+    }
+    if (isset($description)) {
+        if ($description != $old_desc and $description != '') {
+            $update_description = $pdo->prepare("UPDATE producto SET descripcion_Producto=? WHERE ID_producto =?");
+            $update_description->execute([$description, $product_id]);
+            if ($update_description->rowCount() > 0) {
+                $success_msg[] = 'Descripcion Actualizada correctamente';
+            } else {
+                $success_msg[] = 'Error al actualizar descripcion';
+            }
+        } else {
+            $warning_msg[] = 'Error al actualizar, la descripcion es igual a la anterior';
+        }
+    }
+    if (isset($category)) {
+        if ($category != $old_category and $category != '') {
+            $update_category = $pdo->prepare("UPDATE producto SET categoria_Producto=? WHERE ID_producto=?");
+            $update_category->execute([$category, $product_id]);
+            if ($update_category->rowCount() > 0) {
+                $success_msg[] = ' Categoria Actualizada correctamente';
+            } else {
+                $warning_msg[] = 'Error al actualizar categoria';
+            }
+        }
+    }
+
+
+
     //Update image
 
     if (isset($_POST['old_img']) and $_FILES['image']['name'] != '') {
@@ -58,7 +118,6 @@ if (isset($_POST['save'])) {
             if ($old_image != $image && $old_image != '') {
                 unlink('../uploaded-img/productos/' . $old_image);
             }
-            $success_msg[] = 'Imagen actualizada';
         }
     }
 }

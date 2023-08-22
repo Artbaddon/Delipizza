@@ -88,7 +88,7 @@ function hacerConsulta($datos, $consulta)
             $total_dir = $stmt->rowCount();
 
             return  $total_dir;
-            
+
         case "consultarUsuarios":
             $query = "SELECT * FROM usuario";
             $stmt = $pdo->prepare($query);
@@ -137,6 +137,17 @@ function hacerConsulta($datos, $consulta)
             return $direccion;
 
 
+        case "traerProductosID":
+            $query = "SELECT * FROM producto WHERE ID_producto = ?";
+            $stmt = $pdo->prepare($query);
+
+            $stmt->execute([$datos]);
+
+            if ($stmt->rowCount() > 0) {
+                $productos = $stmt->fetch();
+            
+            }
+            return $productos;
         case "traerProductosPrincipales":
             $query = "SELECT * FROM producto WHERE CategoriaID>? AND estado=?";
             $stmt = $pdo->prepare($query);

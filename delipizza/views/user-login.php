@@ -15,12 +15,12 @@ if (isset($_POST['submit'])) {
     $pass = htmlspecialchars($pass);
 
 
-    $select_admin = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ? AND contraseña_Usuario = ?");
-    $select_admin->execute([$email, $pass]);
-    if ($select_admin->rowCount() > 0) {
-        $fetch_admin_id = $select_admin->fetch(PDO::FETCH_ASSOC);
-        $_SESSION['user_id'] = $fetch_admin_id['ID_Usuario'];
-        header('location:../index.php');   
+    $select_user = $pdo->prepare("SELECT * FROM usuario WHERE email_Usuario = ? AND contraseña_Usuario = ?");
+    $select_user->execute([$email, $pass]);
+    if ($select_user->rowCount() > 0) {
+        $fetch_user_id = $select_user->fetch();
+        $_SESSION['user_id'] = $fetch_user_id['ID_Usuario'];
+        header('location:../index.php');
     } else {
         $warning_msg[] = 'El email   o la contraseña son incorrectos';
     }
@@ -40,14 +40,14 @@ if (isset($_POST['submit'])) {
 
     <!-- Box Icon CDN list  -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>User Login  - Delipizza</title>
+    <title>User Login - Delipizza</title>
 </head>
 
 <body>
 
     <div class="main-container">
 
-        <section class="form-container" id="admin_login">
+        <section class="form-container" id="user_login">
             <form action="" method="post" enctype="multipart/form-data">
 
                 <h3>Bienvenido!</h3>
@@ -63,12 +63,11 @@ if (isset($_POST['submit'])) {
                     <input type="submit" name="submit" class="submit" value="Iniciar Sesion" class="btn">
                     <p>¿No tienes cuenta? Registrate <a href="user-register.php">acá</a></p>
                 </div>
-
             </form>
 
         </section>
     </div>
-    <?php include '../components/dark.php'; ?>
+  
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- Custom JS -->
