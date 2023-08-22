@@ -69,7 +69,7 @@ if (isset($_POST['submit'])) {
 
         </section>
     </div>
-    <?php include '../components/dark.php'; ?>
+  
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- Custom JS -->

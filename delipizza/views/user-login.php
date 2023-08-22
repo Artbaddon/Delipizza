@@ -20,7 +20,7 @@ if (isset($_POST['submit'])) {
     if ($select_user->rowCount() > 0) {
         $fetch_user_id = $select_user->fetch();
         $_SESSION['user_id'] = $fetch_user_id['ID_Usuario'];
-        header('location:../index.php');   
+        header('location:../index.php');
     } else {
         $warning_msg[] = 'El email   o la contraseña son incorrectos';
     }
@@ -40,7 +40,7 @@ if (isset($_POST['submit'])) {
 
     <!-- Box Icon CDN list  -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>User Login  - Delipizza</title>
+    <title>User Login - Delipizza</title>
 </head>
 
 <body>
@@ -63,7 +63,6 @@ if (isset($_POST['submit'])) {
                     <input type="submit" name="submit" class="submit" value="Iniciar Sesion" class="btn">
                     <p>¿No tienes cuenta? Registrate <a href="user-register.php">acá</a></p>
                 </div>
-
             </form>
 
         </section>

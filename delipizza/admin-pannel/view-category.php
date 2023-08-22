@@ -86,7 +86,7 @@ if (isset($_POST['delete'])) {
 
 
 
-    <?php include '../components/dark.php'; ?>
+  
     <script src="../js/script.js"></script>
     <!-- Sweet alert script -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
